@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg128"
+   version="1.1"
+   height="52.118168"
+   width="57.016407">
+  <metadata
+     id="metadata134">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs132">
+    <clipPath
+       id="clipPath240"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 33.856148,6.5336427 -0.816705,1.187935 0.445476,1.262181 -1.633411,2.2273783 0.74246,1.707657 -2.153133,3.935034 2.895592,2.969838 -3.11833,4.529002 2.078887,2.895592 -2.004641,2.078886 1.781903,2.895592 -1.707657,2.598608 3.11833,2.153132 -2.821346,3.118329 2.524362,2.227379 -3.118329,2.598608 2.227378,1.336426 -2.672854,2.524362 2.00464,2.598608 -2.895591,2.301624 2.153132,3.192576 -2.450116,1.856148 1.930394,2.301624 -34.969837,2.078887 3.63805059,-59.396752 z"
+         id="path242" />
+    </clipPath>
+    <clipPath
+       id="clipPath244"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         id="path246"
+         d="m 33.856148,6.5336427 -0.816705,1.187935 0.445476,1.262181 -1.633411,2.2273783 0.74246,1.707657 -2.153133,3.935034 2.895592,2.969838 -3.11833,4.529002 2.078887,2.895592 -2.004641,2.078886 1.781903,2.895592 -1.707657,2.598608 3.11833,2.153132 -2.821346,3.118329 2.524362,2.227379 -3.118329,2.598608 2.227378,1.336426 -2.672854,2.524362 2.00464,2.598608 -2.895591,2.301624 2.153132,3.192576 -2.450116,1.856148 1.930394,2.301624 L 66.7471,59.545244 66.227378,7.424594 Z"
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </clipPath>
+  </defs>
+  <g
+     transform="rotate(9,76.357709,15.879769)"
+     clip-path="url(#clipPath244)"
+     id="g145">
+    <rect
+       style="opacity:0.2"
+       width="50"
+       height="32"
+       x="7"
+       y="24"
+       rx="2.5"
+       ry="2.5"
+       id="rect114" />
+    <path
+       style="fill:#4877b1"
+       d="M 7,44.5 C 7,45.885 8.115,47 9.5,47 h 45 c 1.385,0 2.5,-1.115 2.5,-2.5 v -27 C 57,16.115 55.885,15 54.5,15 H 29 V 12.5 C 29,11.115 27.885,10 26.5,10 H 9.5 C 8.115,10 7,11.115 7,12.5"
+       id="path116" />
+    <rect
+       style="opacity:0.2"
+       width="50"
+       height="32"
+       x="7"
+       y="22"
+       rx="2.5"
+       ry="2.5"
+       id="rect118" />
+    <rect
+       style="fill:#e4e4e4"
+       width="44"
+       height="20"
+       x="10"
+       y="18"
+       rx="2.5"
+       ry="2.5"
+       id="rect120" />
+    <rect
+       style="fill:#5294e2"
+       width="50"
+       height="32"
+       x="7"
+       y="23"
+       rx="2.5"
+       ry="2.5"
+       id="rect122" />
+    <path
+       style="opacity:0.1;fill:#ffffff"
+       d="M 9.5,10 C 8.115,10 7,11.115 7,12.5 v 1 C 7,12.115 8.115,11 9.5,11 h 17 c 1.385,0 2.5,1.115 2.5,2.5 v -1 C 29,11.115 27.885,10 26.5,10 Z M 29,15 v 1 h 25.5 c 1.39,0 2.5,1.115 2.5,2.5 v -1 C 57,16.115 55.89,15 54.5,15 Z"
+       id="path124" />
+    <path
+       style="fill:#1d344f"
+       d="M 23.4,31 C 22.625,31 22,31.625 22,32.4 v 13.2 c 0,0.775 0.625,1.4 1.4,1.4 H 40.6 C 41.375,47 42,46.375 42,45.6 V 32.4 C 42,31.625 41.375,31 40.6,31 Z m 4.6,6 6,6 3,-4 3,4 v 2 H 24 v -4 z"
+       id="path126" />
+  </g>
+  <g
+     transform="translate(-7,-7.2644994)"
+     clip-path="url(#clipPath240)"
+     id="g181">
+    <rect
+       id="rect167"
+       ry="2.5"
+       rx="2.5"
+       y="24"
+       x="7"
+       height="32"
+       width="50"
+       style="opacity:0.2" />
+    <path
+       id="path169"
+       d="M 7,44.5 C 7,45.885 8.115,47 9.5,47 h 45 c 1.385,0 2.5,-1.115 2.5,-2.5 v -27 C 57,16.115 55.885,15 54.5,15 H 29 V 12.5 C 29,11.115 27.885,10 26.5,10 H 9.5 C 8.115,10 7,11.115 7,12.5"
+       style="fill:#4877b1" />
+    <rect
+       id="rect171"
+       ry="2.5"
+       rx="2.5"
+       y="22"
+       x="7"
+       height="32"
+       width="50"
+       style="opacity:0.2" />
+    <rect
+       id="rect173"
+       ry="2.5"
+       rx="2.5"
+       y="18"
+       x="10"
+       height="20"
+       width="44"
+       style="fill:#e4e4e4" />
+    <rect
+       id="rect175"
+       ry="2.5"
+       rx="2.5"
+       y="23"
+       x="7"
+       height="32"
+       width="50"
+       style="fill:#5294e2" />
+    <path
+       id="path177"
+       d="M 9.5,10 C 8.115,10 7,11.115 7,12.5 v 1 C 7,12.115 8.115,11 9.5,11 h 17 c 1.385,0 2.5,1.115 2.5,2.5 v -1 C 29,11.115 27.885,10 26.5,10 Z M 29,15 v 1 h 25.5 c 1.39,0 2.5,1.115 2.5,2.5 v -1 C 57,16.115 55.89,15 54.5,15 Z"
+       style="opacity:0.1;fill:#ffffff" />
+    <path
+       id="path179"
+       d="M 23.4,31 C 22.625,31 22,31.625 22,32.4 v 13.2 c 0,0.775 0.625,1.4 1.4,1.4 H 40.6 C 41.375,47 42,46.375 42,45.6 V 32.4 C 42,31.625 41.375,31 40.6,31 Z m 4.6,6 6,6 3,-4 3,4 v 2 H 24 v -4 z"
+       style="fill:#1d344f" />
+  </g>
+</svg>
