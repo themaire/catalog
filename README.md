@@ -26,11 +26,11 @@ Make sure you have the mariadb root password. You find it at the end of the Jeed
 #3
 Change dir to this folder
 and
-Edit ./catalogue/const.php and type your bdd password.
+Edit ./catalog/const.php and type your bdd password.
 
 #4
 Run the .sh script with sudo and add your bdd root's password like this for exemple :
-sudo ./install_catalogue.sh 58b145615cb786
+sudo ./install_catalog.sh 58b145615cb786
 
 That all... Now you can add your 3d models files (forders or zip or rar files) in /home/pi/models in the thingiverse or perso folders, don't rename them.
 
