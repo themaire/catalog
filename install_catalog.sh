@@ -103,14 +103,13 @@ step_catalog() {
 }
 
 echo "Installing dependencies ..."
-apt update && apt install mariadb-client mariadb-common mariadb-server  p7zip p7zip-full -y
+apt update && apt install -y p7zip p7zip-full
 
 step_database
 echo ""
 echo "Import catalog's database ..."
 mysql --user=root --password=$MYSQL_ROOT_PASSWD < lib3d_bdd.sql
 sleep 0.3
-
 
 step_apache
 step_php
