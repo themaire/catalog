@@ -28,4 +28,4 @@ ln -s /var/www/html/catalog/models/ /home/pi/models
 chown -R www-data:www-data /var/www/html/catalog/
 sudo chmod -R 777 /var/www/html/catalog/models/
 
-(crontab -l 2>/dev/null; echo "*/5 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
+(crontab -l 2>/dev/null; echo "*/50 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
