@@ -89,6 +89,19 @@ step_unrar() {
   echo "${VERT}Step unrar OK${NORMAL}"
 }
 
+step_catalog() {
+  echo ""
+  echo "${JAUNE}Move project to /var/www/html/ ...{NORMAL}"
+  cp -r ./catalog/ /var/www/html/
+  sudo chmod -R g+rwx /var/www/html/catalog/
+  adduser pi www-data
+  ln -s /var/www/html/catalog/models/ /home/pi/models
+  chown -R www-data:www-data /var/www/html/catalog/
+  chmod -R 777 /var/www/html/catalog/models/
+  php-cgi -f /var/www/html/catalog/2bdd.php
+  echo "${VERT}Step mooving catalog OK${NORMAL}"
+}
+
 echo "Installing dependencies ..."
 apt update && apt install mariadb-client mariadb-common mariadb-server  p7zip p7zip-full -y
 
@@ -98,18 +111,13 @@ echo "Import catalog's database ..."
 mysql --user=root --password=$MYSQL_ROOT_PASSWD < lib3d_bdd.sql
 sleep 0.3
 
+
 step_apache
 step_php
-step_unrar
+if [ ! -f /usr/bin/unrar ]; then
+	step_unrar
+fi
+step_catalog
 
-echo ""
-echo "Move project to /var/www/html/ ..."
-cp -r ./catalog/ /var/www/html/
-sudo chmod -R g+rwx /var/www/html/catalog/
-adduser pi www-data
-ln -s /var/www/html/catalog/models/ /home/pi/models
-chown -R www-data:www-data /var/www/html/catalog/
-chmod -R 777 /var/www/html/catalog/models/
-php-cgi -f /var/www/html/catalog/2bdd.php
 
 (crontab -l 2>/dev/null; echo "*/50 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
