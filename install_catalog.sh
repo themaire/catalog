@@ -12,7 +12,9 @@ CYAN="\\033[1;36m"
 
 #DBPASSWD=$1
 MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
-echo $MYSQL_ROOT_PASSWD > "/home/pi/database_root_password.txt"
+echo "<?php" > "/var/www/html/catalog/database_root_password.php"
+echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
+echo "?>" >> "/var/www/html/catalog/database_root_password.php"
 
 step_database() {
   echo "---------------------------------------------------------------------"
@@ -101,6 +103,6 @@ adduser pi www-data
 ln -s /var/www/html/catalog/models/ /home/pi/models
 chown -R www-data:www-data /var/www/html/catalog/
 chmod -R 777 /var/www/html/catalog/models/
-php-cgi /var/www/html/catalog/2bdd.php
+php-cgi -f /var/www/html/catalog/2bdd.php
 
 (crontab -l 2>/dev/null; echo "*/50 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
