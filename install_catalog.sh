@@ -1,9 +1,88 @@
-#! /bin/bash
+#! /bin/sh
 
-DBPASSWD=$1
+VERT="\\033[1;32m"
+NORMAL="\\033[0;39m"
+ROUGE="\\033[1;31m"
+ROSE="\\033[1;35m"
+BLEU="\\033[1;34m"
+BLANC="\\033[0;02m"
+BLANCLAIR="\\033[1;08m"
+JAUNE="\\033[1;33m"
+CYAN="\\033[1;36m"
+
+#DBPASSWD=$1
+MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
+echo $MYSQL_ROOT_PASSWD > "/home/pi/database_root_password.txt"
+
+step_database() {
+  echo "---------------------------------------------------------------------"
+  echo "${JAUNE}Start step database mariadb${NORMAL}"
+  echo "mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWD}" | debconf-set-selections
+  echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWD}" | debconf-set-selections
+  apt_install mariadb-client mariadb-common mariadb-server
+  
+  mysqladmin -u root password ${MYSQL_ROOT_PASSWD}
+  
+  systemctl status mysql > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    service mysql status
+    if [ $? -ne 0 ]; then
+      systemctl start mysql > /dev/null 2>&1
+      if [ $? -ne 0 ]; then
+        service mysql start > /dev/null 2>&1
+      fi
+    fi
+  fi
+  systemctl status mysql > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    service mysql status
+    if [ $? -ne 0 ]; then
+      echo "${ROUGE}Can't launch mysql - Canceling${NORMAL}"
+      exit 1
+    fi
+  fi
+  echo "${VERT}Step database mariadb${NORMAL}"
+}
+
+step_apache() {
+  echo "---------------------------------------------------------------------"
+  echo "${JAUNE}Start step apache${NORMAL}"
+  apt_install apache2 apache2-utils libexpat1 ssl-cert
+  echo "${VERT}Step apache Ok${NORMAL}"
+}
+
+step_php() {
+  echo "---------------------------------------------------------------------"
+  echo "${JAUNE}Start step php${NORMAL}"
+  apt_install php libapache2-mod-php php-json php-mysql
+  apt install -y php-curl
+  apt install -y php-gd
+  apt install -y php-imap
+  apt install -y php-xml
+  apt install -y php-opcache
+  apt install -y php-soap
+  apt install -y php-xmlrpc
+  apt install -y php-common
+  apt install -y php-dev
+  apt install -y php-zip
+  apt install -y php-ssh2
+  apt install -y php-mbstring
+  apt install -y php-ldap
+  apt install -y php-cgi
+  echo "${VERT}Step php OK${NORMAL}"
+}
 
 echo "Installing dependencies ..."
-apt update && apt install php7.3-cgi p7zip p7zip-full -y
+apt update && apt install mariadb-client mariadb-common mariadb-server  p7zip p7zip-full -y
+
+step_database
+echo ""
+echo "Import catalog's database ..."
+mysql --user=root --password=$MYSQL_ROOT_PASSWD < lib3d_bdd.sql
+sleep 0.3
+
+step_apache
+step_php
 
 wget http://www.rarlab.com/rar/unrarsrc-5.9.2.tar.gz
 tar zxvf unrarsrc-5.9.2.tar.gz
@@ -13,11 +92,6 @@ make -f makefile
 install -v -m755 unrar /usr/bin
 cd ..
 rm -r unrar
-
-echo ""
-echo "Import catalog's database ..."
-mysql --user=root --password=$DBPASSWD < lib3d_bdd.sql
-sleep 0.3
 
 echo ""
 echo "Move project to /var/www/html/ ..."
