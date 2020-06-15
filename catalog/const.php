@@ -10,6 +10,6 @@
   define('DIFF', 0);
   define('TMP', "tmp/");
   define('TMPIMG', TMP . "img/");
-  define('BASEDIR3D', '/var/www/html/catalogue/'); // catalog's root
+  define('BASEDIR3D', '/var/www/html/catalog/'); // catalog's root
 
 ?>
