@@ -9,7 +9,7 @@ Installation guide.
 Otherwise you must change the models's symbolic link location in the installation script.
 
 #1
-Requirements = php>5, webserver (apache2, ngnix), mariadb.
+Requirements = php7.x, webserver (apache2, ngnix), mariadb.
 
 ( !!!
 It is more comfortable to install all the requirements at once by installing the Jeedom home automation system installation script:
