@@ -15,6 +15,7 @@ MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
 echo "<?php" > "/var/www/html/catalog/database_root_password.php"
 echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
 echo "?>" >> "/var/www/html/catalog/database_root_password.php"
+chown -R www-data:www-data "/var/www/html/catalog/database_root_password.php"
 
 step_database() {
   echo "---------------------------------------------------------------------"
