@@ -44,7 +44,7 @@ step_database() {
       exit 1
     fi
   fi
-  echo "${VERT}Step database mariadb${NORMAL}"
+  echo "${VERT}Step database mariadb OK${NORMAL}"
 }
 
 step_apache() {
