@@ -75,6 +75,20 @@ step_php() {
   echo "${VERT}Step php OK${NORMAL}"
 }
 
+step_unrar() {
+  echo "---------------------------------------------------------------------"
+  echo "${JAUNE}Start step unrar${NORMAL}"
+  wget http://www.rarlab.com/rar/unrarsrc-5.9.2.tar.gz
+  tar zxvf unrarsrc-5.9.2.tar.gz
+  rm unrarsrc-5.9.2.tar.gz
+  cd unrar/
+  make -f makefile
+  install -v -m755 unrar /usr/bin
+  cd ..
+  rm -r unrar
+  echo "${VERT}Step unrar OK${NORMAL}"
+}
+
 echo "Installing dependencies ..."
 apt update && apt install mariadb-client mariadb-common mariadb-server  p7zip p7zip-full -y
 
@@ -86,15 +100,7 @@ sleep 0.3
 
 step_apache
 step_php
-
-wget http://www.rarlab.com/rar/unrarsrc-5.9.2.tar.gz
-tar zxvf unrarsrc-5.9.2.tar.gz
-rm unrarsrc-5.9.2.tar.gz
-cd unrar/
-make -f makefile
-install -v -m755 unrar /usr/bin
-cd ..
-rm -r unrar
+step_unrar
 
 echo ""
 echo "Move project to /var/www/html/ ..."
