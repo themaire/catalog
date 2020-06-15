@@ -24,7 +24,7 @@ Be carefull to store the BDD roots passord at the end of the end of the output!!
 Make sure you have the mariadb root password. You find it at the end of the Jeedom installation output.
 
 #3
-Change dir to this folder
+Change dir to the ust cloned repo's dir ( cd catalog )
 and
 Edit ./catalog/const.php and type your bdd password.
 
