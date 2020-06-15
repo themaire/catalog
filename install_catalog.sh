@@ -22,7 +22,7 @@ step_database() {
   echo "${JAUNE}Start step database mariadb${NORMAL}"
   echo "mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWD}" | debconf-set-selections
   echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWD}" | debconf-set-selections
-  apt_install mariadb-client mariadb-common mariadb-server
+  apt install -y mariadb-client mariadb-common mariadb-server
   
   mysqladmin -u root password ${MYSQL_ROOT_PASSWD}
   
@@ -50,14 +50,14 @@ step_database() {
 step_apache() {
   echo "---------------------------------------------------------------------"
   echo "${JAUNE}Start step apache${NORMAL}"
-  apt_install apache2 apache2-utils libexpat1 ssl-cert
+  apt install -y apache2 apache2-utils libexpat1 ssl-cert
   echo "${VERT}Step apache Ok${NORMAL}"
 }
 
 step_php() {
   echo "---------------------------------------------------------------------"
   echo "${JAUNE}Start step php${NORMAL}"
-  apt_install php libapache2-mod-php php-json php-mysql
+  apt install -y php libapache2-mod-php php-json php-mysql
   apt install -y php-curl
   apt install -y php-gd
   apt install -y php-imap
