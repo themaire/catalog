@@ -26,6 +26,7 @@ sudo chmod -R g+rwx /var/www/html/catalog/
 adduser pi www-data
 ln -s /var/www/html/catalog/models/ /home/pi/models
 chown -R www-data:www-data /var/www/html/catalog/
-sudo chmod -R 777 /var/www/html/catalog/models/
+chmod -R 777 /var/www/html/catalog/models/
+php-cgi /var/www/html/catalog/2bdd.php
 
 (crontab -l 2>/dev/null; echo "*/50 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
