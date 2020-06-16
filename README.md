@@ -8,6 +8,10 @@ Installation guide.
 !!! Thinked to be installed on a Raspberry Pi OS !!!
 Otherwise you must change the models's symbolic link location in the installation script and / or adapte the install bash script yourself.
 
+!! If you use Raspberry Pi OS Lite you will need to install git
+sudo apt update && sudo apt install -y git
+
+
 #1 Clone the catalog's repo : 
 git clone https://github.com/themaire/catalog.git
 
