@@ -44,7 +44,7 @@ step_database() {
   mysql --user=root --password=$MYSQL_ROOT_PASSWD < lib3d_bdd.sql
   sleep 0.3
   echo "${JAUNE}Create admin user${NORMAL}"
-  mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "CREATE USER 'admin'@'%' IDENTIFIED BY $MYSQL_ROOT_PASSWD;"
+  mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWD';"
   mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;"
   mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "FLUSH PRIVILEGES;"
 
