@@ -149,7 +149,7 @@ step_catalog() {
   ln -s /var/www/html/catalog/models/ /home/pi/models
   chown -R www-data:www-data /var/www/html/catalog/
   chmod -R 777 /var/www/html/catalog/models/
-  
+
   echo "<?php" > "/var/www/html/catalog/database_root_password.php"
   echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
   echo "?>" >> "/var/www/html/catalog/database_root_password.php"
@@ -162,7 +162,10 @@ step_catalog() {
 
 echo "Installing dependencies ..."
 apt update && apt install -y p7zip p7zip-full
-step_database
+if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
+then
+  step_database
+fi
 step_apache
 step_php
 if [ ! -f /usr/bin/unrar ]; then
