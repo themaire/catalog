@@ -170,4 +170,4 @@ fi
 step_catalog
 
 
-(crontab -l 2>/dev/null; echo "*/50 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
+(crontab -l 2>/dev/null; echo "*/10 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
