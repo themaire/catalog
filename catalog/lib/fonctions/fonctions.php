@@ -1,5 +1,6 @@
 <?php
 
+  require('/var/www/html/catalog/database_root_password.php');
   require('lib/fonctions/generiques.php');
 
   function selectId($table, $id_field, $where_field, $path, $depth = 2 + DIFF){
