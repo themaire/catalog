@@ -142,7 +142,7 @@ step_unrar() {
 
 step_catalog() {
   echo ""
-  echo "${JAUNE}Move project to /var/www/html/ ...{NORMAL}"
+  echo "${JAUNE}Move project to /var/www/html/ ...${NORMAL}"
   cp -r ./catalog/ /var/www/html/
   sudo chmod -R g+rwx /var/www/html/catalog/
   adduser pi www-data
