@@ -12,10 +12,6 @@ CYAN="\\033[1;36m"
 
 #DBPASSWD=$1
 MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
-echo "<?php" > "/var/www/html/catalog/database_root_password.php"
-echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
-echo "?>" >> "/var/www/html/catalog/database_root_password.php"
-chown -R www-data:www-data "/var/www/html/catalog/database_root_password.php"
 
 step_database() {
   echo "---------------------------------------------------------------------"
@@ -102,6 +98,12 @@ step_catalog() {
   chown -R www-data:www-data /var/www/html/catalog/
   chmod -R 777 /var/www/html/catalog/models/
   php-cgi -f /var/www/html/catalog/2bdd.php
+  
+  echo "<?php" > "/var/www/html/catalog/database_root_password.php"
+  echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
+  echo "?>" >> "/var/www/html/catalog/database_root_password.php"
+  chown -R www-data:www-data "/var/www/html/catalog/database_root_password.php"
+  
   echo "${VERT}Step mooving catalog OK${NORMAL}"
 }
 
