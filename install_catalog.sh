@@ -149,7 +149,7 @@ step_catalog() {
   echo "<?php" > "/var/www/html/catalog/database_root_password.php"
   echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
   echo "?>" >> "/var/www/html/catalog/database_root_password.php"
-  chown -R www-data:www-data "/var/www/html/catalog/database_root_password.php"
+  chown -R www-data:www-data /var/www/html/catalog/database_root_password.php
   
   echo "${VERT}Step mooving catalog OK${NORMAL}"
 }

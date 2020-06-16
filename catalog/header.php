@@ -20,7 +20,7 @@
   <body>
     <header class="header">
       <div class="container-fluid">
-        <h1>Catalogue</h1>
+        <h1>STL catalog</h1>
         <h2>My personal STLs collection</h2>
       </div>
     </header>
