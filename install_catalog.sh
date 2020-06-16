@@ -107,7 +107,6 @@ step_catalog() {
 
 echo "Installing dependencies ..."
 apt update && apt install -y p7zip p7zip-full
-
 step_database
 step_apache
 step_php
