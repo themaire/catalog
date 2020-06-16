@@ -98,10 +98,10 @@
     $strTmp .= "<div class='container-sm'><table align='center' class='table'>";
     $strTmp .= "<tr>
     			<thead>
-                	<th id='stl'>Date d'ajout</th>
-                	<th>Nombre de téléchargements</th>
-                	<th>Imprimé</th>
-                	<th>Observations</th>
+                	<th id='stl'>Added</th>
+                	<th>Downloaded</th>
+                	<th>Printed</th>
+                	<th>Notes</th>
                 </thead>
                 </tr>";
 
