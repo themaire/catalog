@@ -2,7 +2,7 @@
   
 
   define('dbDefault', 'lib3d');
-  define('DBUSER', 'root');
+  define('DBUSER', 'admin');
   include("/var/www/html/catalog/database_root_password.php");
   define('DBPORT', 3306);
 //  define('DBHOST', '127.0.0.1'); // Synology
