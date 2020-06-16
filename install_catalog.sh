@@ -44,7 +44,7 @@ step_database() {
       exit 1
     fi
   fi
-  echo "${JAUNE}Import catalog's database ...{NORMAL}"
+  echo "${JAUNE}Import catalog's database ...${NORMAL}"
   mysql --user=root --password=$MYSQL_ROOT_PASSWD < lib3d_bdd.sql
   sleep 0.3
   echo "${VERT}Step database mariadb OK${NORMAL}"
