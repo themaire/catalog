@@ -47,9 +47,95 @@ step_database() {
 }
 
 step_apache() {
+  WEBSERVER_HOME=/var/www/html
   echo "---------------------------------------------------------------------"
   echo "${JAUNE}Start step apache${NORMAL}"
+
   apt install -y apache2 apache2-utils libexpat1 ssl-cert
+
+  cp ${WEBSERVER_HOME}/install/apache_security /etc/apache2/conf-available/security.conf
+  sed -i -e "s%WEBSERVER_HOME%${WEBSERVER_HOME}%g" /etc/apache2/conf-available/security.conf
+  
+  rm /etc/apache2/conf-enabled/security.conf > /dev/null 2>&1
+  ln -s /etc/apache2/conf-available/security.conf /etc/apache2/conf-enabled/
+  
+  cp ${WEBSERVER_HOME}/install/apache_default /etc/apache2/sites-available/000-default.conf
+  sed -i -e "s%WEBSERVER_HOME%${WEBSERVER_HOME}%g" /etc/apache2/sites-available/000-default.conf
+  rm /etc/apache2/sites-enabled/000-default.conf > /dev/null 2>&1
+  ln -s /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/
+  
+  rm /etc/apache2/conf-available/other-vhosts-access-log.conf > /dev/null 2>&1
+  rm /etc/apache2/conf-enabled/other-vhosts-access-log.conf > /dev/null 2>&1
+  
+  mkdir /etc/systemd/system/apache2.service.d
+  echo "[Service]" > /etc/systemd/system/apache2.service.d/privatetmp.conf
+  echo "PrivateTmp=no" >> /etc/systemd/system/apache2.service.d/privatetmp.conf
+  
+  systemctl daemon-reload
+  
+  for file in $(find / -iname php.ini -type f); do
+    echo "Update php file ${file}"
+    sed -i 's/max_execution_time = 30/max_execution_time = 600/g' ${file} > /dev/null 2>&1
+    sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 1G/g' ${file} > /dev/null 2>&1
+    sed -i 's/post_max_size = 8M/post_max_size = 1G/g' ${file} > /dev/null 2>&1
+    sed -i 's/expose_php = On/expose_php = Off/g' ${file} > /dev/null 2>&1
+    sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+    sed -i 's/opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+    sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
+    sed -i 's/opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
+    sed -i 's/memory_limit = 128M/memory_limit = 256M/g' ${file} > /dev/null 2>&1
+  done
+  
+  a2dismod status
+  systemctl restart apache2 > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    service apache2 restart
+    if [ $? -ne 0 ]; then
+      echo "${ROUGE}Ne peut redémarrer apache - Annulation${NORMAL}"
+      exit 1
+    fi
+  fi
+  
+  systemctl stop mysql > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    service mysql stop
+    if [ $? -ne 0 ]; then
+      echo "${ROUGE}Ne peut arrêter mysql - Annulation${NORMAL}"
+      exit 1
+    fi
+  fi
+  
+  rm /var/lib/mysql/ib_logfile*
+  
+  if [ -d /etc/mysql/conf.d ]; then
+    touch /etc/mysql/conf.d/jeedom_my.cnf
+    echo "[mysqld]" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "skip-name-resolve" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "key_buffer_size = 16M" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "thread_cache_size = 16" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "tmp_table_size = 48M" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "max_heap_table_size = 48M" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "query_cache_type =1" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "query_cache_size = 32M" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "query_cache_limit = 2M" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "query_cache_min_res_unit=3K" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "innodb_flush_method = O_DIRECT" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "innodb_flush_log_at_trx_commit = 2" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "innodb_log_file_size = 32M" >> /etc/mysql/conf.d/jeedom_my.cnf
+    echo "innodb_large_prefix = on" >> /etc/mysql/conf.d/jeedom_my.cnf
+  fi
+  
+  systemctl start mysql > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    service mysql start
+    if [ $? -ne 0 ]; then
+      echo "${ROUGE}Ne peut lancer mysql - Annulation${NORMAL}"
+      exit 1
+    fi
+  fi
+
+
+
   echo "${VERT}Step apache Ok${NORMAL}"
 }
 
