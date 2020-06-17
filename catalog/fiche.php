@@ -117,7 +117,7 @@
 
     $strTmp .= "<form action='' method='post' target='_self'>" .
                 "<input id='dl' name='dl' value='" . $stl['stl_path'] . "/" . $stl['stl_nom'] ."' type='hidden' >" .
-                "<button class='btn btn-primary '>Télécharger</button>" .
+                "<button class='btn btn-primary'>Download</button>" .
             "</form></div><br>";
     
     $strTmp .= '<div id="listContent">';
@@ -128,9 +128,9 @@
         $strTmp .= "<tr>
         			<thead>
                         <th>#</th>
-                        <th id='fichiers'>Nom</th>
+                        <th id='fichiers'>Name</th>
                         <th>Type</th>
-                        <th>Taille</th>
+                        <th>Size</th>
                     </thead>
                     </tr>";
 
