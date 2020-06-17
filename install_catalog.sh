@@ -144,6 +144,7 @@ step_catalog() {
   echo ""
   echo "${JAUNE}Move project to /var/www/html/ ...${NORMAL}"
   cp -r ./catalog/ /var/www/html/
+  mkdir /var/www/html/catalog/models/perso
   sudo chmod -R g+rwx /var/www/html/catalog/
   adduser pi www-data
   ln -s /var/www/html/catalog/models/ /home/pi/models
