@@ -142,37 +142,70 @@ step_unrar() {
 
 step_catalog() {
   echo ""
+  webdir="/var/www/html/"
   echo "${JAUNE}Move project to /var/www/html/ ...${NORMAL}"
-  cp -r ./catalog/ /var/www/html/
-  mkdir /var/www/html/catalog/models/perso
-  sudo chmod -R g+rwx /var/www/html/catalog/
+  cp -r ./catalog/ "$webdir"
+  sudo chmod -R g+rwx "$webdir""catalog/"
   adduser pi www-data
-  ln -s /var/www/html/catalog/models/ /home/pi/models
-  chown -R www-data:www-data /var/www/html/catalog/
-  chmod -R 777 /var/www/html/catalog/models/
-
-  echo "<?php" > "/var/www/html/catalog/database_root_password.php"
-  echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
-  echo "?>" >> "/var/www/html/catalog/database_root_password.php"
-  chown -R www-data:www-data /var/www/html/catalog/database_root_password.php
-  
-  php-cgi -f /var/www/html/catalog/2bdd.php
+  ln -s "$webdir""catalog/models/" "/home/pi/models"
+  chown -R www-data:www-data "$webdir""catalog/"
+  chmod -R 777 webdir="/var/www/html/""catalog/models/"
 
   echo "${VERT}Step mooving catalog OK${NORMAL}"
 }
 
+step_install_catalog() {
+  echo ""
+  webdir="/var/www/html/"
+  echo "${JAUNE}Install the project${NORMAL}"
+  step_catalog
+
+  echo "<?php" > "/var/www/html/catalog/database_root_password.php"
+  echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
+  echo "?>" >> "/var/www/html/catalog/database_root_password.php"
+  chown -R www-data:www-data "/var/www/html/""catalog/database_root_password.php"
+  
+  php-cgi -f "/var/www/html/""catalog/2bdd.php"
+  (crontab -l 2>/dev/null; echo "*/10 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
+
+  echo "${VERT}Install catalog OK${NORMAL}"
+}
+
 echo "Installing dependencies ..."
-apt update && apt install -y p7zip p7zip-full
+apt update
+
+if [ ! -f "/usr/bin/7z" ]
+then
+   apt install -y p7zip p7zip-full
+fi
+
 if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
 then
   step_database
 fi
-step_apache
-step_php
-if [ ! -f /usr/bin/unrar ]; then
+
+statusApache=$(systemctl status apache2.service)
+if [ $? -eq 1 ]
+then
+  step_apache
+fi
+
+if [ ! -f "/usr/bin/php-cgi" ]
+then
+  step_php
+fi
+
+if [ ! -f "/usr/bin/unrar" ]; then
 	step_unrar
 fi
-step_catalog
+
+if [ ! -f "/var/www/html/catalog/" ]; then
+  step_install_catalog
+else
+  step_catalog
+  echo "${VERT}Update catalog OK${NORMAL}"
+fi
 
 
-(crontab -l 2>/dev/null; echo "*/10 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
+
+
