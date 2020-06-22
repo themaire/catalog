@@ -1,5 +1,4 @@
 <?php
-    define('LOADARCHIVE', true);
 
     // Icones
     $hauteurIcon = 40;
@@ -22,7 +21,8 @@
 	//$stl_id = 49;
 
     // STL
-    $field = array(	"stl_nom" => null,
+    $field = array(	"stl_id" => null,
+                    "stl_nom" => null,
     				"stl_date_ajout" => null,
     				"lib_nom" => null,
     				"stl_path" => null,
@@ -33,7 +33,7 @@
     $join = array("libelles" => "st.lib_id_categorie = li.lib_id");
     $where = array("stl_id" => $stl_id);
     $stl = simpleSelect($field, 'stl', $where, $join)["data"][0];
-    $stl['stl_printed'] = ($stl["stl_printed"] == null) ? $stl['stl_printed'] = 'Non' : $stl['stl_printed'] = 'Oui';
+    $stl['stl_printed'] = ($stl["stl_printed"] == null) ? $stl['stl_printed'] = 'No' : $stl['stl_printed'] = 'Yes';
     $fullPath = $stl["stl_path"] . "/" . $stl["stl_nom"];
     $typeStl = fileInfo($fullPath)['ext'];
 
@@ -95,7 +95,7 @@
 
     $strTmp .= "<h1>" . $stl['stl_nom'] . "</h1>";
 
-    $strTmp .= "<div class='container-sm'><table align='center' class='table'>";
+    $strTmp .= "<div class='container-sm'><table align='center' class='table table-nique-les-bordures'>";
     $strTmp .= "<tr>
     			<thead>
                 	<th id='stl'>Added</th>
@@ -116,15 +116,17 @@
     $strTmp .= "</table>";
 
     $strTmp .= "<form action='' method='post' target='_self'>" .
+                "<input id='dl' name='stl_id' value='" . $stl['stl_id'] ."' type='hidden' >" .
+                "<input id='dl' name='stl_nb_dl' value='" . $stl['stl_nb_dl'] ."' type='hidden' >" .
                 "<input id='dl' name='dl' value='" . $stl['stl_path'] . "/" . $stl['stl_nom'] ."' type='hidden' >" .
                 "<button class='btn btn-primary'>Download</button>" .
-            "</form></div><br>";
+                "</form></div><br>";
     
     $strTmp .= '<div id="listContent">';
     $strTmp .= '<div class="child_stlContent">';
     // Tableau des pièces jointes
     if(!empty($fichiers["pj"])){
-        $strTmp .= "<table class='table table-dark table-striped'>";
+        $strTmp .= "<table class='table table-dark table-striped table-hover'>";
         $strTmp .= "<tr>
         			<thead>
                         <th>#</th>
@@ -201,7 +203,7 @@
         $strTmp .= "</table><br>";
     }else{
         /*$strTmp .= "</table>";*/
-        $strTmp .= "<h1 align='center'>Il n'y a pas de fichiers joints.</h1>";
+        $strTmp .= "<h1 align='center'>Can't find attached files.</h1>";
     }
     $strTmp .= '</div>';
 
@@ -279,7 +281,7 @@
         }
         $strTmp .= "</table>";
     }else{
-        $strTmp .= "<h1 align='center'>Il n'y a pas d'images jointes.</h1>";
+        $strTmp .= "<h1 align='center'>There are no images attached.</h1>";
     }
     $strTmp .= "<br>";
 

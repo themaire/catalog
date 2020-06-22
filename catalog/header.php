@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" dir="ltr">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
     <title><?php echo $titre; ?></title>
@@ -21,7 +21,7 @@
     <header class="header">
       <div class="container-fluid">
         <h1>STL catalog</h1>
-        <h2>My personal STLs collection</h2>
+        <h2>My STLs collection</h2>
       </div>
     </header>
 
@@ -30,21 +30,42 @@
       <form action="" method="post" target="_self">
 
       <?php
-        $where = array("lib_nom_id" => 0, "lib_free" => 1);
-        if($_GET['tartine'] == "speculoos"){
-          $where = array("lib_nom_id" => 0);
-        }
+        
 
         $fieldName = "lib_nom";
         $field = array($fieldName => null);
         $join = array("libelles_noms" => "lib_id = lib_nom_nom");
         $query = simpleSelect($field, "libelles", $where);
+
+        if(isset($_GET['tartine'])){
+          if($_GET['tartine'] == "culoos"){ // Full acces
+            $where = array("lib_nom_id" => 0);
+            $query = simpleSelect($field, "libelles", $where); // Cool acces
+          }else if($_GET['tartine'] == "speculoos"){
+            $where = array("lib_nom_id" => 0);
+            $or = array("lib_free" => array("1" => 0, "2" => 1));
+            $query = simpleSelect($field, "libelles", $where, null, $or);
+          }
+          // settings button
+          $settingBtn = "<td width=100px><button type='submit' class='btn btn-secondary' name='settings'>Settings</button></td>";
+        }else{ // Free acces
+          $where = array("lib_free" => 0);
+          $query = simpleSelect($field, "libelles", $where);
+        }
+
         $data = array("data" => $query['data'], "erreur" => $query['erreur']);
 
-        $strTmpp = "";
-        foreach ($data['data'] as $value) {
-          $strTmpp .= "<button type='submit' class='btn btn-default' name='categorie' value=". $value[$fieldName] . ">" . ucfirst($value[$fieldName]) . "</button>";
+        $strTmpp = "<div class='container'>";
+        $strTmpp .= "<nav class='navbar navbar-expand-lg'><table class='table table-nique-les-bordures'><tr>";
+        if(count($data['data'])){
+          foreach ($data['data'] as $value) {
+            $strTmpp .= "<td align='center'><button type='submit' class='btn btn-primary' name='categorie' value=". $value[$fieldName] . ">" . ucfirst($value[$fieldName]) . "</button></td>";
+          }
         }
+
+        $strTmpp .= isset($settingBtn)? $settingBtn : "";
+        $strTmpp .= "</tr></table></nav></div>";
+      
 
         echo $strTmpp;
       ?>

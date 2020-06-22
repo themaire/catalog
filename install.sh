@@ -59,13 +59,13 @@ step_apache() {
 
   apt install -y apache2 apache2-utils libexpat1 ssl-cert
 
-  cp install/apache_security /etc/apache2/conf-available/security.conf
+  cp files_install/apache_security /etc/apache2/conf-available/security.conf
   sed -i -e "s%WEBSERVER_HOME%${WEBSERVER_HOME}%g" /etc/apache2/conf-available/security.conf
   
   rm /etc/apache2/conf-enabled/security.conf > /dev/null 2>&1
   ln -s /etc/apache2/conf-available/security.conf /etc/apache2/conf-enabled/
   
-  cp install/apache_default /etc/apache2/sites-available/000-default.conf
+  cp files_install/apache_default /etc/apache2/sites-available/000-default.conf
   sed -i -e "s%WEBSERVER_HOME%${WEBSERVER_HOME}%g" /etc/apache2/sites-available/000-default.conf
   rm /etc/apache2/sites-enabled/000-default.conf > /dev/null 2>&1
   ln -s /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/

@@ -12,5 +12,4 @@
   define('TMP', "tmp/");
   define('TMPIMG', TMP . "img/");
   define('BASEDIR3D', '/var/www/html/catalog/'); // catalog's root
-
 ?>
