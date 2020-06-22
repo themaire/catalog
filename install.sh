@@ -199,7 +199,7 @@ if [ ! -f "/usr/bin/unrar" ]; then
 	step_unrar
 fi
 
-if [ ! -f "/var/www/html/catalog/" ]; then
+if [ ! -d "/var/www/html/catalog/" ]; then
   step_install_catalog
 else
   step_catalog
