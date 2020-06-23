@@ -29,3 +29,19 @@ Put your 3D models in /home/pi/models/thingiverse or /home/pi/models/perso folde
 By default, a crontab script scan every 10 minutes the content of /home/pi/models and updatee the BDD content.
 If you add a file in a already scanned folder, it will be added in the BDD after the scanning interval.
 If you delete a folder, it will be deleted in the BDD.
+
+
+Update guide.
+It is easy. 
+
+#1
+Change dir to the just cloned repo dir :
+cd catalog
+
+#2
+Update the project :
+git pull
+
+#3
+Run the install script again :
+sudo ./install.sh
