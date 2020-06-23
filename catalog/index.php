@@ -7,6 +7,10 @@
   include("lib/fonctions/func_fichiers.php");
   include("lib/fonctions/func_archives.php");
 
+  // const BASEDIR3D = "/volume1/3d/";
+
+//   var_dump($_POST);
+
   // Opérateur Ternaire :
   // condition ? valeur si ok : valeur sinon.
   $_SESSION["titre"] = ucfirst($_POST["categorie"]) ? ucfirst($_POST["categorie"]) : "Les STLs d'Ovier";
@@ -15,6 +19,12 @@
   $choixOk=false;
 
   if(isset($_POST["dl"])){
+    // Increment downloaded counter
+    $nbDl = intval($_POST['stl_nb_dl']) + 1;
+    $fields = array( "stl_nb_dl" => $nbDl);
+    $where = array("stl_id" => $_POST['stl_id']);
+    update('stl', $fields, $where);
+
     if(is_dir($_POST["dl"])){
       zip2download($_POST["dl"]);
     }else if(is_file($_POST["dl"])){
@@ -22,30 +32,52 @@
     }
   }
 
+  // Actions
+  if(isset($_POST)){
+    if(isset($_POST['saveCategory'])){
+        $fields = array( "lib_nom" => trim(strtolower($_POST['lib_nom'])),
+                        "lib_free" => $_POST['lib_free']);
+        $where = array("lib_id" => $_POST['lib_id']);
+        update('libelles', $fields, $where);
+        // $_POST['name'] is the old name for updatin
+        rename("models/" . $_POST['name'] ,"models/" . trim(strtolower($_POST['lib_nom'])));
+    }else if(isset($_POST['newCategory'])){
+        $fields = array( "lib_nom" => trim(strtolower($_POST['lib_nom'])),
+                        "lib_free" => $_POST['lib_free'],
+                        "lib_nom_id" => 0
+                        );
+        insert('libelles', $fields);
+        mkdir("models/" . trim(strtolower($_POST['lib_nom'])));
+    }else if(isset($_POST['deleteCategory'])){
+        $field = array( "lib_id" => $_POST['lib_id']);
+        delete('libelles', $field);
+        rmdir("models/" . $_POST['name']);
+    }
+  }
+
+  // Web page construction
   include('header.php'); // Tête de la page
 
-  if(isset($_POST["categorie"]) || isset($_POST['stl_id']) || isset($_SESSION['stl_id'])){
-    if(isset($_POST["categorie"])){
+  if(isset($_POST['saveCategory']) || isset($_POST['newCategory']) || isset($_POST['deleteCategory'])){
+      $include = 'settings.php';
+      include($include);
+  }else if(isset($_POST["categorie"]) || isset($_POST['stl_id']) || isset($_SESSION['stl_id']) || isset($_POST['settings']) || isset($_POST['settings'])){
+    if(isset($_POST['settings'])){
+      $include = 'settings.php';
+    }else if(isset($_POST["categorie"])){
+      $_SESSION["categorie"] = $_POST["categorie"];
+      $_SESSION["titre"] = ucfirst($_POST["categorie"]);
       $include = 'liste_bdd.php';
-      //$include = 'liste.php';
     }else if(isset($_POST['stl_id']) || isset($_SESSION['stl_id'])){
       $include = 'fiche.php';
     }
-    
-    
-    // Si on a changé de categorie (appuis sur bouton pour changer)
-    if(isset($_POST["categorie"])){
-      $_SESSION["categorie"] = $_POST["categorie"];
-      $_SESSION["titre"] = ucfirst($_POST["categorie"]);
-    }
-
     $choixOk=true;
   }else{
-    echo "Welcome.";
-  }
+    echo "Welcome to the catalog project.";
+  } 
 
   // Ajout du navigateur de vignettes
-  if ($choixOk){
+  if($choixOk){
     if(file_exists($include)){
       include($include);
     }
