@@ -149,7 +149,7 @@ step_catalog() {
   adduser pi www-data
   ln -s "$webdir""catalog/models/" "/home/pi/models"
   chown -R www-data:www-data "$webdir""catalog/"
-  chmod -R 777 "webdir="/var/www/html/""catalog/models/"
+  chmod -R 777 "$webdir""catalog/models/"
 
   echo "${VERT}Step mooving catalog OK${NORMAL}"
 }
