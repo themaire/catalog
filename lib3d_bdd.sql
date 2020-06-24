@@ -85,11 +85,8 @@ CREATE TABLE `libelles` (
 --
 
 INSERT INTO `libelles` (`lib_id`, `lib_nom`, `lib_nom_id`, `lib_free`) VALUES
-(1, 'gamebody', 0, NULL),
-(2, 'sanix', 0, NULL),
-(3, 'thingiverse', 0, 1),
-(4, 'divers', 0, NULL),
-(5, 'perso', 0, 1),
+(1, 'thingiverse', 0, 1),
+(2, 'perso', 0, 1),
 (6, 'jpeg', 1, NULL),
 (7, 'jpg', 1, NULL),
 (8, 'png', 1, NULL),
