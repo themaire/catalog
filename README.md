@@ -13,7 +13,7 @@ sudo apt update && sudo apt install -y git
 
 
 #1 Clone the catalog's repo : 
-git clone https://github.com/themaire/catalog.git
+git clone https://github.com/themaire/catalog
 
 #2
 Change dir to the just cloned repo dir :
