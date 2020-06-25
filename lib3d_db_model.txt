@@ -1,0 +1,73 @@
+MariaDB [lib3d]> show tables;
++-----------------+
+| Tables_in_lib3d |
++-----------------+
+| fichiers        |
+| fichiers_stl    |
+| libelles        |
+| libelles_noms   |
+| stl             |
++-----------------+
+5 rows in set (0.001 sec)
+
+MariaDB [lib3d]> desc lib3d.fichiers;
++-------------+------------------+------+-----+---------+----------------+
+| Field       | Type             | Null | Key | Default | Extra          |
++-------------+------------------+------+-----+---------+----------------+
+| fi_id       | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| stl_id      | int(10) unsigned | NO   | MUL | NULL    |                |
+| fi_nom      | text             | NO   |     | NULL    |                |
+| fi_path     | text             | NO   |     | NULL    |                |
+| lib_id_type | int(10) unsigned | NO   |     | NULL    |                |
+| fi_taille   | float            | YES  |     | NULL    |                |
++-------------+------------------+------+-----+---------+----------------+
+6 rows in set (0.004 sec)
+
+MariaDB [lib3d]> desc lib3d.fichiers_stl;
++--------------+------------------+------+-----+---------+-------+
+| Field        | Type             | Null | Key | Default | Extra |
++--------------+------------------+------+-----+---------+-------+
+| nom          | text             | NO   |     | NULL    |       |
+| taille       | float            | YES  |     | NULL    |       |
+| type         | text             | YES  |     | NULL    |       |
+| id_categorie | int(11)          | YES  |     | NULL    |       |
+| chemin       | mediumtext       | YES  |     | NULL    |       |
+| stl_id       | int(10) unsigned | YES  |     | 0       |       |
++--------------+------------------+------+-----+---------+-------+
+6 rows in set (0.005 sec)
+
+MariaDB [lib3d]> desc lib3d.stl;
++------------------+------------------+------+-----+---------------------+----------------+
+| Field            | Type             | Null | Key | Default             | Extra          |
++------------------+------------------+------+-----+---------------------+----------------+
+| stl_id           | int(10) unsigned | NO   | PRI | NULL                | auto_increment |
+| stl_nom          | text             | NO   |     | NULL                |                |
+| stl_date_ajout   | date             | YES  |     | current_timestamp() |                |
+| lib_id_categorie | int(11)          | YES  |     | NULL                |                |
+| stl_path         | text             | NO   |     | NULL                |                |
+| stl_nb_dl        | int(11)          | YES  |     | NULL                |                |
+| stl_printed      | tinyint(1)       | YES  |     | NULL                |                |
+| stl_observations | text             | YES  |     | NULL                |                |
+| stl_thumbnail    | text             | YES  |     | NULL                |                |
++------------------+------------------+------+-----+---------------------+----------------+
+9 rows in set (0.004 sec)
+
+MariaDB [lib3d]> desc lib3d.libelles;
++------------+------------------+------+-----+---------+----------------+
+| Field      | Type             | Null | Key | Default | Extra          |
++------------+------------------+------+-----+---------+----------------+
+| lib_id     | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| lib_nom    | text             | NO   |     | NULL    |                |
+| lib_nom_id | int(11)          | NO   |     | NULL    |                |
+| lib_free   | tinyint(1)       | YES  |     | NULL    |                |
++------------+------------------+------+-----+---------+----------------+
+4 rows in set (0.004 sec)
+
+MariaDB [lib3d]> desc lib3d.libelles_noms;
++-------------+------------------+------+-----+---------+----------------+
+| Field       | Type             | Null | Key | Default | Extra          |
++-------------+------------------+------+-----+---------+----------------+
+| lib_nom_id  | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| lib_nom_nom | text             | NO   |     | NULL    |                |
++-------------+------------------+------+-----+---------+----------------+
+2 rows in set (0.004 sec)
