@@ -26,7 +26,7 @@ sudo ./install.sh
 That all... Now you can add your 3d models files (forders or zip or rar files) in /home/pi/models in the thingiverse or perso folders, don't rename them.
 Put your 3D models in /home/pi/models/thingiverse or /home/pi/models/perso folders. One subfolder by stl project as the exemple i left in /home/pi/models/thingiverse. You can direcly add a zip or a rar archive in these folders.
 
-By default, a crontab script scan every 10 minutes the content of /home/pi/models and updatee the BDD content.
+By default, a crontab script scan every 15 minutes the content of /home/pi/models and updatee the BDD content.
 If you add a file in a already scanned folder, it will be added in the BDD after the scanning interval.
 If you delete a folder, it will be deleted in the BDD.
 
