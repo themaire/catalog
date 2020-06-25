@@ -166,7 +166,7 @@ step_install_catalog() {
   chown -R www-data:www-data "/var/www/html/""catalog/database_root_password.php"
   
   php-cgi -f "/var/www/html/""catalog/2bdd.php"
-  (crontab -l 2>/dev/null; echo "*/10 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
+  (crontab -l 2>/dev/null; echo "*/15 9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
 
   echo "${VERT}Install catalog OK${NORMAL}"
 }
