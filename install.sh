@@ -14,6 +14,12 @@ webdir="/var/www/html/"
 
 # Define database password
 if [ $(cat /var/www/html/index.php | head -n 3 | grep "Jeedom" | wc -l ) -eq 1 ]; then
+	jeedom=1
+else
+	jeedom=0
+fi
+
+if [ "$jeedom" -eq 1 ]; then
 # If Jeedom home automation is installed
 	if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
 	# If need to know the db password
@@ -229,7 +235,7 @@ fi
 if [ ! -d "/var/www/html/catalog/" ]; then
 # Install from ZERO
 
-	if [ $(cat /var/www/html/index.php | head -n 3 | grep "Jeedom" | wc -l ) -eq 1 ]; then
+	if [ "$jeedom" -eq 1 ]; then
 	# Jeedom home automation is already installed
 
 		import_database
