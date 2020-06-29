@@ -10,12 +10,41 @@ BLANCLAIR="\\033[1;08m"
 JAUNE="\\033[1;33m"
 CYAN="\\033[1;36m"
 
-#DBPASSWD=$1
-MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
+webdir="/var/www/html/"
+
+# Define database password
+if [ $(cat /var/www/html/index.php | head -n 3 | grep "Jeedom" | wc -l ) -eq 1 ]; then
+# If Jeedom home automation is installed
+	if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
+	# If need to know the db password
+	then
+		if [ "$MYSQL_ROOT_PASSWD" != "" ]
+		then
+			# Ask user
+			echo "Type the MYSQL's root password please..."
+			read MYSQL_ROOT_PASSWD
+			mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "select 1;"
+			if [ $? -ne 0 ]; then
+				echo "Can't connect to the database. $MYSQL_ROOT_PASSWD root's password is wrong."
+				exit 1
+			fi
+		else
+			echo "No password given."
+			exit 1
+		fi
+	fi
+else
+	if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
+	# If need to know the db password
+	then
+
+		MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
+	fi	
+fi
 
 step_database() {
   echo "---------------------------------------------------------------------"
-  echo "${JAUNE}Start step database mariadb${NORMAL}"
+  echo "${JAUNE}Start step install database mariadb${NORMAL}"
   echo "mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWD}" | debconf-set-selections
   echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWD}" | debconf-set-selections
   apt install -y mariadb-client mariadb-common mariadb-server
@@ -40,6 +69,11 @@ step_database() {
       exit 1
     fi
   fi
+  import_database
+  echo "${VERT}Step install database mariadb OK${NORMAL}"
+}
+
+import_database() {
   echo "${JAUNE}Import catalog's database ...${NORMAL}"
   mysql --user=root --password=$MYSQL_ROOT_PASSWD < lib3d_bdd.sql
   sleep 0.3
@@ -48,7 +82,7 @@ step_database() {
   mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;"
   mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "FLUSH PRIVILEGES;"
 
-  echo "${VERT}Step database mariadb OK${NORMAL}"
+  echo "${VERT}Step database imported OK${NORMAL}"
 }
 
 step_apache() {
@@ -122,7 +156,6 @@ step_php() {
   apt install -y php-ssh2
   apt install -y php-mbstring
   apt install -y php-ldap
-  apt install -y php-cgi
   echo "${VERT}Step php OK${NORMAL}"
 }
 
@@ -141,71 +174,89 @@ step_unrar() {
 }
 
 step_catalog() {
+  # Used for upgrade the project too.
   echo ""
-  webdir="/var/www/html/"
   echo "${JAUNE}Move project to /var/www/html/ ...${NORMAL}"
   cp -r ./catalog/ "$webdir"
   sudo chmod -R g+rwx "$webdir""catalog/"
-  adduser pi www-data
-  ln -s "$webdir""catalog/models/" "/home/pi/models"
   chown -R www-data:www-data "$webdir""catalog/"
   chmod -R 777 "$webdir""catalog/models/"
 
   echo "${VERT}Step mooving catalog OK${NORMAL}"
 }
 
-step_install_catalog() {
-  echo ""
-  webdir="/var/www/html/"
-  echo "${JAUNE}Install the project${NORMAL}"
-  step_catalog
-
+create_dbPassw_file() {
   echo "<?php" > "/var/www/html/catalog/database_root_password.php"
   echo "define('DBPASSWD', '$MYSQL_ROOT_PASSWD');" >> "/var/www/html/catalog/database_root_password.php"
   echo "?>" >> "/var/www/html/catalog/database_root_password.php"
   chown -R www-data:www-data "/var/www/html/""catalog/database_root_password.php"
+}
+
+step_install_catalog() {
+  # Used at the first install only.
+  echo ""
+  echo "${JAUNE}Install the project${NORMAL}"
+  apt install -y php-cgi # For running php scripts command line
+  adduser pi www-data
+  ln -s "$webdir""catalog/models/" "/home/pi/models"
+
+  step_catalog
+  
+  create_dbPassw_file
   
   php-cgi -f "/var/www/html/""catalog/2bdd.php"
-  (crontab -l 2>/dev/null; echo "*/15 9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
+  (crontab -l 2>/dev/null; echo "*/10 0,1,9-23 * * * php-cgi -f /var/www/html/catalog/2bdd.php") | crontab -
 
   echo "${VERT}Install catalog OK${NORMAL}"
 }
+
+# Beguin
+
 
 echo "Installing dependencies ..."
 apt update
 
 if [ ! -f "/usr/bin/7z" ]
 then
-   apt install -y p7zip p7zip-full
-fi
-
-if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
-then
-  step_database
-fi
-
-statusApache=$(systemctl status apache2.service)
-if [ $? -eq 1 ]
-then
-  step_apache
-fi
-
-if [ ! -f "/usr/bin/php-cgi" ]
-then
-  step_php
+	apt install -y p7zip p7zip-full
 fi
 
 if [ ! -f "/usr/bin/unrar" ]; then
 	step_unrar
 fi
 
+
 if [ ! -d "/var/www/html/catalog/" ]; then
-  step_install_catalog
-else
-  step_catalog
-  echo "${VERT}Update catalog OK${NORMAL}"
+# Install from ZERO
+
+	if [ $(cat /var/www/html/index.php | head -n 3 | grep "Jeedom" | wc -l ) -eq 1 ]; then
+	# Jeedom home automation is already installed
+
+		import_database
+		step_install_catalog
+
+	else
+	# Not Jeedom found
+		step_database
+
+		systemctl status apache2.service
+		if [ $? -eq 1 ]
+		then
+		  step_apache
+		fi
+
+		if [ ! -f "/usr/bin/php-cgi" ]
+		then
+		  step_php
+		fi
+
+		step_install_catalog
+
+	fi
+
+elsif [ ! -f "/var/www/html/catalog/database_root_password.php" ]
+
+# Update the project
+      	step_catalog
+  	echo "${VERT}Update catalog OK${NORMAL}"
 fi
-
-
-
-
