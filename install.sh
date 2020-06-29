@@ -260,7 +260,7 @@ if [ ! -d "/var/www/html/catalog/" ]; then
 
 	fi
 
-elsif [ ! -f "/var/www/html/catalog/database_root_password.php" ]
+else if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
 
 # Update the project
       	step_catalog
