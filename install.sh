@@ -266,3 +266,4 @@ elsif [ ! -f "/var/www/html/catalog/database_root_password.php" ]
       	step_catalog
   	echo "${VERT}Update catalog OK${NORMAL}"
 fi
+exit 0
