@@ -226,23 +226,19 @@ step_install_catalog() {
 
 # Beguin
 
-
-echo "Installing dependencies ..."
-if [ "$1" != "-nu" ]; then
-    apt update
-fi
-
-if [ ! -f "/usr/bin/7z" ]; then
-	apt install -y p7zip p7zip-full
-fi
-
-if [ ! -f "/usr/bin/unrar" ]; then
-	step_unrar
-fi
-
-
 if [ ! -d "/var/www/html/catalog/" ]; then
 # Install from ZERO
+
+    echo "Installing dependencies ..."
+    apt update
+
+    if [ ! -f "/usr/bin/7z" ]; then
+        apt install -y p7zip p7zip-full
+    fi
+
+    if [ ! -f "/usr/bin/unrar" ]; then
+        step_unrar
+    fi
 
     if [ "$jeedom" -eq 1 ]; then
     # Jeedom home automation is already installed

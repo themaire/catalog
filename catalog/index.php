@@ -47,7 +47,7 @@
                         "lib_nom_id" => 0
                         );
         insert('libelles', $fields);
-        mkdir("models/" . trim(strtolower($_POST['lib_nom'])));
+        mkdir("models/" . trim(strtolower($_POST['lib_nom'])), 0775);
     }else if(isset($_POST['deleteCategory'])){
         $field = array( "lib_id" => $_POST['lib_id']);
         delete('libelles', $field);
