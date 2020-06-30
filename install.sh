@@ -195,7 +195,7 @@ step_catalog() {
   cp -r ./catalog/ "$webdir"
   sudo chmod -R g+rwx "$webdir""catalog/"
   chown -R www-data:www-data "$webdir""catalog/"
-  chmod -R 777 "$webdir""catalog/models/"
+  chmod -R 775 "$webdir""catalog/models/"
 
   echo "${VERT}Step mooving catalog OK${NORMAL}"
 }
