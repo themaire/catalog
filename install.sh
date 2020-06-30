@@ -13,10 +13,14 @@ CYAN="\\033[1;36m"
 webdir="/var/www/html/"
 
 # Define database password
-if [ $(cat /var/www/html/index.php | head -n 3 | grep "Jeedom" | wc -l ) -eq 1 ]; then
-	jeedom=1
+if [ -f /var/www/html/index.php ] && [ $(cat /var/www/html/index.php &> /dev/null | head -n 3 | grep "Jeedom" | wc -l) -eq 1 ]; then
+    if [ $? -ne 0 ] ; then
+        jeedom=1
+        echo "Jeedom detected."
+    fi
 else
-	jeedom=0
+    echo $testJeedom
+    jeedom=0
 fi
 
 if [ "$jeedom" -eq 1 ]; then
@@ -181,7 +185,6 @@ step_unrar() {
 
 step_catalog() {
   # Used for upgrade the project too.
-  echo ""
   echo "${JAUNE}Move project to /var/www/html/ ...${NORMAL}"
   cp -r ./catalog/ "$webdir"
   sudo chmod -R g+rwx "$webdir""catalog/"
