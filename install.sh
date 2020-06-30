@@ -19,38 +19,44 @@ if [ -f /var/www/html/index.php ] && [ $(cat /var/www/html/index.php &> /dev/nul
         echo "Jeedom detected."
     fi
 else
-    echo $testJeedom
     jeedom=0
 fi
 
 if [ "$jeedom" -eq 1 ]; then
 # If Jeedom home automation is installed
-	if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
-	# If need to know the db password
-	then
-		if [ "$MYSQL_ROOT_PASSWD" != "" ]
-		then
-			# Ask user
-			echo "Type the MYSQL's root password please..."
-			read MYSQL_ROOT_PASSWD
-			mysql --user=root --password=$MYSQL_ROOT_PASSWD -e "select 1;"
-			if [ $? -ne 0 ]; then
-				echo "Can't connect to the database. $MYSQL_ROOT_PASSWD root's password is wrong."
-				exit 1
-			fi
-		else
-			echo "No password given."
-			exit 1
-		fi
-	fi
+    if [ ! -f "/var/www/html/catalog/database_root_password.php" ]; then
+    # If need to know the db password
+        if [ "$MYSQL_ROOT_PASSWD" != "" ]; then
+        # Password typing by user
+            # Ask user
+            echo "Type the MYSQL's root password please..."
+            read MYSQL_ROOT_PASSWD
+            testDatabase $MYSQL_ROOT_PASSWD
+        else
+            echo "No password given."
+            exit 1
+        fi
+    else
+        password=$(cat "/var/www/html/catalog/database_root_password.php" | grep "define" | cut -d "'" -f 4)
+        testDatabase $password
+    fi
 else
-	if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
-	# If need to know the db password
-	then
-
-		MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
-	fi	
+    if [ ! -f "/var/www/html/catalog/database_root_password.php" ]; then
+    # If need to create the db passwor
+        MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
+    fi
 fi
+
+
+testDatabase() {
+    mysql --user=root --password=$1 -e "select 1;" &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Can't connect to the database. $1 root's password is wrong."
+        exit 1
+    else
+        echo "Database is OK"
+    fi
+}
 
 step_database() {
   echo "---------------------------------------------------------------------"
@@ -203,7 +209,6 @@ create_dbPassw_file() {
 
 step_install_catalog() {
   # Used at the first install only.
-  echo ""
   echo "${JAUNE}Install the project${NORMAL}"
   apt install -y php-cgi # For running php scripts command line
   adduser pi www-data
@@ -223,10 +228,11 @@ step_install_catalog() {
 
 
 echo "Installing dependencies ..."
-apt update
+if [ "$1" != "-nu" ]; then
+    apt update
+fi
 
-if [ ! -f "/usr/bin/7z" ]
-then
+if [ ! -f "/usr/bin/7z" ]; then
 	apt install -y p7zip p7zip-full
 fi
 
@@ -238,35 +244,32 @@ fi
 if [ ! -d "/var/www/html/catalog/" ]; then
 # Install from ZERO
 
-	if [ "$jeedom" -eq 1 ]; then
-	# Jeedom home automation is already installed
+    if [ "$jeedom" -eq 1 ]; then
+    # Jeedom home automation is already installed
 
-		import_database
-		step_install_catalog
+        import_database
+        step_install_catalog
 
-	else
-	# Not Jeedom found
-		step_database
+    else
+    # Not Jeedom found
+        step_database
 
-		systemctl status apache2.service
-		if [ $? -eq 1 ]
-		then
-		  step_apache
-		fi
+        systemctl status apache2.service
+        if [ $? -eq 1 ]; then
+          step_apache
+        fi
 
-		if [ ! -f "/usr/bin/php-cgi" ]
-		then
-		  step_php
-		fi
+        if [ ! -f "/usr/bin/php-cgi" ]; then
+          step_php
+        fi
 
-		step_install_catalog
+        step_install_catalog
 
-	fi
+    fi
 
-else if [ ! -f "/var/www/html/catalog/database_root_password.php" ]
-
+else
 # Update the project
-      	step_catalog
-  	echo "${VERT}Update catalog OK${NORMAL}"
+          step_catalog
+      echo "${VERT}Update catalog OK${NORMAL}"
 fi
 exit 0
