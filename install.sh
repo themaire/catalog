@@ -198,7 +198,7 @@ step_catalog() {
   # Used for upgrade the project too.
   echo "${JAUNE}Move project to /var/www/html/ ...${NORMAL}"
   cp -r ./catalog/ "$webdir"
-  sudo chmod -R g+rwx "$webdir""catalog/"
+  chmod -R g+rwx "$webdir""catalog/"
   chown -R www-data:www-data "$webdir""catalog/"
   chmod -R 775 "$webdir""catalog/models/"
 
