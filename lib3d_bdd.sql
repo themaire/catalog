@@ -121,7 +121,7 @@ CREATE TABLE `libelles_noms` (
 INSERT INTO `libelles_noms` (`lib_nom_id`, `lib_nom_nom`) VALUES
 (0, 'categorie'),
 (1, 'extension'),
-(2, 'hostname');
+(2, 'domain');
 
 -- --------------------------------------------------------
 
