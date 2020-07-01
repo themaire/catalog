@@ -13,14 +13,20 @@ CYAN="\\033[1;36m"
 webdir="/var/www/html/"
 
 # Define database password
-if [ -f /var/www/html/index.php ] && [ $(cat /var/www/html/index.php &> /dev/null | head -n 3 | grep "Jeedom" | wc -l) -eq 1 ]; then
-    if [ $? -ne 0 ] ; then
-        jeedom=1
-        echo "Jeedom detected."
-    fi
-else
-    jeedom=0
+if [ -f "/var/www/html/index.php" ]; then
+	jeedom=$(head /var/www/html/index.php -n 3 | grep "Jeedom" | wc -l)
+	echo "${JAUNE}Jeedom detected.${NORMAL}"
 fi
+
+testDatabase() {
+    mysql --user=root --password=$1 -e "select 1;" &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Can't connect to the database. $1 root's password is wrong."
+        exit 1
+    else
+        echo "Database is OK"
+    fi
+}
 
 if [ "$jeedom" -eq 1 ]; then
 # If Jeedom home automation is installed
@@ -30,7 +36,7 @@ if [ "$jeedom" -eq 1 ]; then
         # Password typing by user
             # Ask user
             echo "Type the MYSQL's root password please..."
-            read -p "password?" MYSQL_ROOT_PASSWD
+            read -p "mot de passe?" MYSQL_ROOT_PASSWD
             testDatabase $MYSQL_ROOT_PASSWD
         else
             echo "No password given."
@@ -46,7 +52,6 @@ else
         MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
     fi
 fi
-
 
 testDatabase() {
     mysql --user=root --password=$1 -e "select 1;" &> /dev/null
