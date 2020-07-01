@@ -5,7 +5,7 @@ nicolas@familleelie.fr
 
 Installation guide.
 
-!!! Thinked to be installed on a Raspberry Pi OS !!!
+!!! Thinked to be installed on a Raspberry Pi OS or Debian !!!
 Otherwise you must change the models's symbolic link location in the installation script and / or adapte the install bash script yourself.
 
 !! If you use Raspberry Pi OS Lite you will need to install git
