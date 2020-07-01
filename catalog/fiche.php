@@ -113,9 +113,13 @@
                 </thead>
                 </tr>";
 
+    // Domain name
+    $cmdSQL = "select lib_nom from libelles left join libelles_noms li on libelles.lib_nom_id = li.lib_nom_id where lib_nom_nom = 'domain';";
+    $domain = select($cmdSQL)["data"][0]['lib_nom'];
+  
     $strTmp .= "<tr>
     			<tbody>
-			<td align='center'><a href='https://familleelie.fr:444/catalogue/?stl_id=" . $stl['stl_id'] . "'>" . $stl['stl_id'] . "</a></td>
+			<td align='center'><a href='" . $domain . "/catalog/?stl_id=" . $stl['stl_id'] . "'>" . $stl['stl_id'] . "</a></td>
 	                <td>" . $stl['stl_date_ajout'] . "</td>
 	                <td>" . $stl['stl_nb_dl'] . "</td>
 	                <td>" . $stl['stl_printed'] . "</td>
@@ -137,7 +141,7 @@
     if(!empty($fichiers["pj"])){
         $strTmp .= "<table class='table table-dark table-striped table-hover'>";
         $strTmp .= "<tr>
-        			<thead>
+      			<thead>
                         <th>#</th>
                         <th id='fichiers'>Name</th>
                         <th>Type</th>

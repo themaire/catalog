@@ -69,9 +69,9 @@
     $strTmp .= "</table>";
 
     // Domain name
-    $field = array("lib_nom" => null,
-    		"lib_id" => null);
-    $where = array("lib_id" => 1);
+    //$field = array("lib_nom" => null,
+    //		"lib_id" => null);
+    //$where = array("lib_id" => 1);
     $cmdSQL = "select lib_id, lib_nom from libelles left join libelles_noms li on libelles.lib_nom_id = li.lib_nom_id where lib_nom_nom = 'domain';";
     $domain = select($cmdSQL)["data"][0];
 
