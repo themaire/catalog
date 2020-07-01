@@ -95,9 +95,17 @@
 
     $strTmp .= "<h1>" . $stl['stl_nom'] . "</h1>";
 
+    if(isset($_GET)){
+	$get="";
+        foreach ($_GET as $key => $value){
+    		$get .=  $key . "=" . $value . "<br>";
+	}
+    }
+
     $strTmp .= "<div class='container-sm'><table align='center' class='table table-nique-les-bordures'>";
     $strTmp .= "<tr>
-    			<thead>
+			<thead>
+			<th>#</th>
                 	<th id='stl'>Added</th>
                 	<th>Downloaded</th>
                 	<th>Printed</th>
@@ -107,6 +115,7 @@
 
     $strTmp .= "<tr>
     			<tbody>
+			<td align='center'><a href='https://familleelie.fr:444/catalogue/?stl_id=" . $stl['stl_id'] . "'>" . $stl['stl_id'] . "</a></td>
 	                <td>" . $stl['stl_date_ajout'] . "</td>
 	                <td>" . $stl['stl_nb_dl'] . "</td>
 	                <td>" . $stl['stl_printed'] . "</td>

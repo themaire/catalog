@@ -60,7 +60,7 @@
   // Web page construction
   include('header.php'); // Tête de la page
 
-  if(isset($_POST['saveCategory']) || isset($_POST['newCategory']) || isset($_POST['deleteCategory'])){
+  if(isset($_POST['saveCategory']) || isset($_POST['newCategory']) || isset($_POST['deleteCategory']) || isset($_POST['setDomain'])){
       $include = 'settings.php';
       include($include);
   }else if(isset($_POST["categorie"]) || isset($_POST['stl_id']) || isset($_SESSION['stl_id']) || isset($_POST['settings']) || isset($_POST['settings'])){

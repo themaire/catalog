@@ -1,5 +1,13 @@
 <?php
 
+    if(isset($_POST['setDomain'])){
+        $field = array( "lib_nom" => trim(strtolower($_POST['domain'])));
+        $where = array("lib_id" => $_POST['lib_id']);
+        update('libelles', $field, $where);
+    }
+
+
+
     // STL
     $fields = array("lib_id" => null,
     				"lib_nom" => null,
@@ -19,7 +27,7 @@
     $strTmp .= "<tr><td align='center'>-</td>";
     $strTmp .= "<form action='' method='post' target='_self'>";
     $strTmp .= "<td align='center'><input id='addCategories' type='text' name='lib_nom' placeholder='New name'>";
-    $strTmp .= "<td align='center'><input id='assCategories' type='number' name='lib_free' placeholder='2' min='0' max='2'>";
+    $strTmp .= "<td align='center'><input id='assCategories' type='number' name='lib_free' value=1 placeholder='2' min='0' max='2'>";
     $strTmp .= "<td align='center'><button type='submit' class='btn btn-warning' name='newCategory'>New</button></td>";
     $strTmp .= "</form>";
     $strTmp .= "</tr>";
@@ -49,7 +57,7 @@
                 $strTmp .= "</td>";
             }
             $strTmp .= "<td align='center'>
-                            <button type='submit' class='btn btn-success' name='saveCategory'>Save</button>
+                            <button type='submit' class='btn btn-success' name='saveCategory'>Save</button>  
                             <button type='submit' class='btn btn-danger' name='deleteCategory'>Delete</button>
                         </td>";
             $strTmp .= "</tr>";
@@ -59,8 +67,24 @@
     
 
     $strTmp .= "</table>";
-	
-	$strTmp .= "</div>";
+
+    // Domain name
+    $field = array("lib_nom" => null,
+    		"lib_id" => null);
+    $where = array("lib_id" => 1);
+    $cmdSQL = "select lib_id, lib_nom from libelles left join libelles_noms li on libelles.lib_nom_id = li.lib_nom_id where lib_nom_nom = 'domain';";
+    $domain = select($cmdSQL)["data"][0];
+
+    $strTmp .= "<form action='' method='post' target='_self'>";
+    $strTmp .= "";
+    $strTmp .= "<input id='domain' type='text' name='domain' value='" . $domain["lib_nom"] . "'>   ";
+    $strTmp .= "<input type='hidden' name='lib_id' value='" . $domain["lib_id"] . "'>";
+
+    $strTmp .= "<button type='submit' class='btn btn-success' name='setDomain'>Save domain</button></td>";
+    $strTmp .= "</form>";
+    $strTmp .= "<br>";
+
+    $strTmp .= "</div>";
 
     echo $strTmp;
 ?>
