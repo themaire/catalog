@@ -28,7 +28,7 @@ testDatabase() {
     fi
 }
 
-if [ "$jeedom" -eq 1 ]; then
+if [ ${jeedom:-0} -eq 1 ]; then
 # If Jeedom home automation is installed
     if [ ! -f "/var/www/html/catalog/database_root_password.php" ]; then
     # If need to know the db password
