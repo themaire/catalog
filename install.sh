@@ -208,8 +208,8 @@ step_install_catalog() {
   # Used at the first install only.
   echo "${JAUNE}Install the project${NORMAL}"
   apt install -y php-cgi # For running php scripts command line
-  adduser ${USER} www-data
-  ln -s "$webdir""catalog/models/" "/home/${USER}/models"
+  adduser pi www-data
+  ln -s "$webdir""catalog/models/" "/home/pi/models"
 
   step_catalog
   
