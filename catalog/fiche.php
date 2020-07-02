@@ -12,7 +12,10 @@
     $srcIconPicture = "<img src=" . $iconPicture . " height=". $hauteurIcon . "/>";
 
     // Requettes base de données
-    if(isset($_POST["stl_id"])){
+    if(isset($_GET["stl_id"])){
+        $stl_id = $_GET["stl_id"];
+        $_SESSION['stl_id'] = $_GET["stl_id"];
+    }else if(isset($_POST["stl_id"])){
         $stl_id = $_POST["stl_id"];
         $_SESSION['stl_id'] = $_POST["stl_id"];
     }else{
