@@ -36,7 +36,7 @@ if [ ${jeedom:-0} -eq 1 ]; then
     # Password typing by user
         # Ask user
         echo "Type the MYSQL's root password please..."
-        read -p "mot de passe?" MYSQL_ROOT_PASSWD
+        read -p "Password? " MYSQL_ROOT_PASSWD
 	    
         if [ "$MYSQL_ROOT_PASSWD" != "" ]; then
             testDatabase $MYSQL_ROOT_PASSWD
