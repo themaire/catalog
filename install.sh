@@ -19,7 +19,7 @@ if [ -f "/var/www/html/index.php" ]; then
 fi
 
 testDatabase() {
-    mysql --user=root --password=$1 -e "select 1;" 1&2> /dev/null
+    mysql --user=root --password=$1 -e "select 1;" 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
         echo "Can't connect to the database. $1 root's password is wrong."
         exit 1
