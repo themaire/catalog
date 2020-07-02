@@ -32,11 +32,13 @@ if [ ${jeedom:-0} -eq 1 ]; then
 # If Jeedom home automation is installed
     if [ ! -f "/var/www/html/catalog/database_root_password.php" ]; then
     # If need to know the db password
+    
+    # Password typing by user
+        # Ask user
+        echo "Type the MYSQL's root password please..."
+        read -p "mot de passe?" MYSQL_ROOT_PASSWD
+	    
         if [ "$MYSQL_ROOT_PASSWD" != "" ]; then
-        # Password typing by user
-            # Ask user
-            echo "Type the MYSQL's root password please..."
-            read -p "mot de passe?" MYSQL_ROOT_PASSWD
             testDatabase $MYSQL_ROOT_PASSWD
         else
             echo "No password given."
@@ -52,16 +54,6 @@ else
         MYSQL_ROOT_PASSWD=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
     fi
 fi
-
-testDatabase() {
-    mysql --user=root --password=$1 -e "select 1;" &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "Can't connect to the database. $1 root's password is wrong."
-        exit 1
-    else
-        echo "Database is OK"
-    fi
-}
 
 step_database() {
   echo "---------------------------------------------------------------------"
@@ -245,7 +237,7 @@ if [ ! -d "/var/www/html/catalog/" ]; then
         step_unrar
     fi
 
-    if [ "$jeedom" -eq 1 ]; then
+    if [ ${jeedom:-0} -eq 1 ]; then
     # Jeedom home automation is already installed
 
         import_database
