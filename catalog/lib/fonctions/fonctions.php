@@ -1,6 +1,9 @@
 <?php
 
-  //require('/var/www/html/catalog/database_root_password.php');
+  define('dbDefault', 'lib3d');
+  define('DIFF', 0);
+  define('TMP', "tmp/");
+  define('TMPIMG', TMP . "img/");
   require('lib/fonctions/generiques.php');
 
   function selectId($table, $id_field, $where_field, $path, $depth = 2 + DIFF){
@@ -143,12 +146,14 @@
     // Prend en parametre le chemin complet de l'élément ($item) ainsi que son nom ($elem).
     // S'occupe de verifier si pas déja dans la table fichier. Enregistre en base si necessaire.
 
-    $testAlready = selectFile($item); // Donne le fi_id si jamais le fichier existe en base
+    $testAlready = selectFile($item); // Retourne le fi_id si existe déja
 
-    if(isset($_GET["debug"]) && !is_null($testAlready["data"])){
-      echo "Le fichier existe deja (fi_id = " . $testAlready['data'] . ").<br>";
-    }else if(isset($_GET["debug"]) && is_null($testAlready["data"])){
-      echo "Le fichier n'existe pas encore nous allons l'insert dans la table fichier.<br>";
+    if(isset($_GET["debug"])){
+	    if(!is_null($testAlready["data"])){
+	      echo $elem . " existe deja (fi_id = " . $testAlready['data'] . ").<br>";
+	    }else{
+	      echo $elem . " n'existe pas encore nous allons l'insert dans la table fichier.<br>";
+    	}
     }
 
     $id_type = selectIdType("libelles", "lib_id", "lib_nom", $item)['data'];
@@ -208,7 +213,7 @@
       }
     }else{
       if(isset($_GET["debug"])){
-        echo $item . " déja dans la base avec l'ID (" . $testAlready["data"] . ").<br><br>";
+        echo $item . " exist ( ID : " . $testAlready["data"] . ").<br><br>";
       }
     }
     echo "<br>";
@@ -221,7 +226,7 @@
     if ($zip->open($item) == TRUE) {
       $files = array();
       for($i = 0; $i < $zip->numFiles; $i++){
-        if(substr($zip->getNameIndex($i), -1) != "/"){
+        if(substr($zip->getNameIndex($i), -1) != "/" || $i[0] != "."){
           $files[$i]['name'] = trim($zip->getNameIndex($i));
           $files[$i]['size'] = $zip->statIndex($i)['size'];
           if(isset($_GET["debug"])){
@@ -237,7 +242,7 @@
   }
 
   function openRar($item){
-    // Ouvre un Zip et retourne un array contenant le chemin de tous les fichiers à l'interieur
+    // Ouvre un Rar et retourne un array contenant le chemin de tous les fichiers à l'interieur
     // Mais retourne le message d'erreur si besoin
     $cmd = "unrar lb " . '"' . $item . '"';
     // echo "Command : $cmd<br>";
@@ -247,7 +252,7 @@
     $files = array();
     $cpt = 0;
     foreach ($output as $value) {
-      if(getExt($value)){ // Prendre uniquement les lignes qui sont des vrais noms de fichiers
+      if(getExt($value  || $i[0] != ".")){ // Prendre uniquement les lignes qui sont des vrais noms de fichiers
         // echo "fichier : $value<br>";
         $files[$cpt]['name'] = $value;
 
@@ -307,6 +312,8 @@
     // Fonction qui parcours récursiement le dossier donné en paramètre.
     // .. ! Cette fonction est récusrive car elle s'appelle elle-meme dans
     // .. ! le cas où elle se heurte à un dossier pour le parcourir lui aussi.
+    $added = array();
+
     if(isset($_GET["debug"])){
       echo '<<<<<<<<======= addBdd(' . $dossier . ',' . $depth . ').<br>';
     }
@@ -318,10 +325,17 @@
     }
 
     foreach ($dir as $elem){ // Pour chaque élément de $dir où $elem est l'élément courrant
+
+      if($elem[0] == "."){
+        continue;
+      }
+
       $item = $dossier . '/' . $elem; // Construction du chemin de l'item
       $ext = getExt($item);
       $typeItem = typeItem($item, $ext); // Savoir si dossier|archive OU fichier
       $explotem = explode("/", $item); // L'avoir en mémoire
+
+      
 
       if($typeItem == "dossier" && $depth >= 0 && $depth <= 2){ // Si un dossier
         if(is_dir($item)){ // Ok c'est un dossier
@@ -330,6 +344,7 @@
           if($preTestAlready != null){
             if(isset($_GET["debug"])){
               echo "STOP le dossier de base existe en base. stl_id = $preTestAlready<br>";
+              continue;
             }
           }else{
             var_dump($explotem);
@@ -344,9 +359,22 @@
             echo "Pas la peine on connait deja le stl $explotem[2] en base.<br>";
           }else{
             $content = scanDoss($item);
-            echo "Test si 1er truc est LE seul truc : $item" . "/" . $content[0] . "<br>";
+            $countcontent = count($content);
+            
 
-            if(count($content) == 1 && is_dir($item . "/" . $content[0])){
+            if($countcontent > 1){
+              foreach ($content as $thing){
+                if($thing[0] != "." and is_dir($item . "/" . $thing)){
+                    $first = $thing;
+                    break;
+                    exit($first);
+                }
+              }
+            }
+
+            echo "Test si 1er truc est LE seul truc : $item" . "/" . $first . "<br>";
+
+            if($countcontent == 1 && is_dir($item . "/" . $first)){
               if(isset($_GET["debug"])){
                 echo "Je saute puisque le dossier actuel a un seul truc " . " : " . $item . "<br>
                       is_dir($item . '/'' . $content[0]) est visiblement un dossier.<br>";
@@ -358,10 +386,17 @@
           addBdd($item, $depth); // Re plonger plus profond dans CE sous-dossiers
         }else{
           // Nous sommes dans une archive.
-          // Ajout de l'archive en tant que STL dans la table STL
-          stlProcessing($dossier, $explotem, $item, $elem, $depth);
-          // Ajout du contenu de l'archive dans la table fichiers
-          archiveProcessing($ext, $item, $elem);
+          $testAlready = selectId("stl", "stl_id", "stl_nom", $item, count($explotem) - 1);
+          if(is_null($testAlready['data'])){ // Si n'existe pas
+            // Ajout de l'archive en tant que STL dans la table STL
+            stlProcessing($dossier, $explotem, $item, $elem, $depth);
+            // Ajout du contenu de l'archive dans la table fichiers
+            archiveProcessing($ext, $item, $elem);
+          }else{
+          	if(isset($_GET["debug"])){
+              echo "Nous connaissons déja cet archive avec l'id : " . $testAlready['data'] . "<br>";
+            }
+          }
         }
       }else if($typeItem == "fichier"){
         fileProcessing($item, $elem);

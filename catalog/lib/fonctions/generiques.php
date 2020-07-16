@@ -303,7 +303,7 @@
 
     function scanDoss($doss){
     	// Obtenir la liste des elements du dossier sans le . et le .. .
-        $scan = array_diff(scandir($doss), array('..', '.', 'Thumbs.db', '.DS_Store', '@eaDir'));
+        $scan = array_diff(scandir($doss), array('..', '.', 'Thumbs.db', '.DS_Store', '._.DS_Store', '@eaDir'));
         $llisteise = array();
         foreach($scan as $value){
             $liste[] = $value;
