@@ -325,17 +325,10 @@
     }
 
     foreach ($dir as $elem){ // Pour chaque élément de $dir où $elem est l'élément courrant
-
-      if($elem[0] == "."){
-        continue;
-      }
-
       $item = $dossier . '/' . $elem; // Construction du chemin de l'item
       $ext = getExt($item);
       $typeItem = typeItem($item, $ext); // Savoir si dossier|archive OU fichier
       $explotem = explode("/", $item); // L'avoir en mémoire
-
-      
 
       if($typeItem == "dossier" && $depth >= 0 && $depth <= 2){ // Si un dossier
         if(is_dir($item)){ // Ok c'est un dossier
@@ -344,7 +337,6 @@
           if($preTestAlready != null){
             if(isset($_GET["debug"])){
               echo "STOP le dossier de base existe en base. stl_id = $preTestAlready<br>";
-              continue;
             }
           }else{
             var_dump($explotem);
@@ -359,22 +351,9 @@
             echo "Pas la peine on connait deja le stl $explotem[2] en base.<br>";
           }else{
             $content = scanDoss($item);
-            $countcontent = count($content);
-            
+            echo "Test si 1er truc est LE seul truc : $item" . "/" . $content[0] . "<br>";
 
-            if($countcontent > 1){
-              foreach ($content as $thing){
-                if($thing[0] != "." and is_dir($item . "/" . $thing)){
-                    $first = $thing;
-                    break;
-                    exit($first);
-                }
-              }
-            }
-
-            echo "Test si 1er truc est LE seul truc : $item" . "/" . $first . "<br>";
-
-            if($countcontent == 1 && is_dir($item . "/" . $first)){
+            if(count($content) == 1 && is_dir($item . "/" . $content[0])){
               if(isset($_GET["debug"])){
                 echo "Je saute puisque le dossier actuel a un seul truc " . " : " . $item . "<br>
                       is_dir($item . '/'' . $content[0]) est visiblement un dossier.<br>";
