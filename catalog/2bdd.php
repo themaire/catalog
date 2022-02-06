@@ -2,7 +2,7 @@
 	include("const.php");
 	include("lib/fonctions/fonctions.php");
   
-	$stlDirectory = 'models'	
+	$stlDirectory = '/models'	
 
 	// Empècher le scan si le dossier de base des STLs VIDE. Pour empêcher l'effacement complet de la BDD.
 	$dir = scanDoss($stlDirectory);
