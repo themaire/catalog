@@ -9,7 +9,9 @@
 
 	if(count($dir) != 0){
 		addBdd($stlDirectory);
-		exec("mysql --user=root --password=" . DBPASSWD . "--database=lib3d -e 'delete from fichiers where fi_nom like '._%';");
+		$garbageQuery="mysql --user=root --password='" . DBPASSWD . "' --database=lib3d -e \"delete from fichiers where fi_nom like '._%';\"";
+		//echo($garbageQuery);
+		exec($garbageQuery);
 		delBdd();
 	}
 	//else{ Prevenir ???}
