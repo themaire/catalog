@@ -74,7 +74,7 @@ router.get('/models/:id/download', downloadLimiter, async (req, res, next) => {
   }
 });
 
-router.get('/models/:id/thumbnail/:file', async (req, res, next) => {
+router.get('/models/:id/thumbnail/:file', downloadLimiter, async (req, res, next) => {
   const id = Number(req.params.id);
   const fileName = req.params.file;
   if (!Number.isInteger(id) || id <= 0 || !fileName) {
