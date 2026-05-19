@@ -30,7 +30,7 @@ router.post('/categories', async (req, res, next) => {
   if (!parsed.success) return res.status(400).json({ error: 'Invalid payload' });
 
   try {
-    const id = await createCategory(parsed.data.name.trim().toLowerCase(), parsed.data.rightLevel);
+    const id = await createCategory(parsed.data.name.trim(), parsed.data.rightLevel);
     res.status(201).json({ id });
   } catch (err) {
     next(err);
@@ -43,7 +43,7 @@ router.put('/categories/:id', async (req, res, next) => {
   if (!Number.isInteger(id) || id <= 0 || !parsed.success) return res.status(400).json({ error: 'Invalid payload' });
 
   try {
-    await updateCategory(id, parsed.data.name.trim().toLowerCase(), parsed.data.rightLevel);
+    await updateCategory(id, parsed.data.name.trim(), parsed.data.rightLevel);
     res.status(204).send();
   } catch (err) {
     next(err);

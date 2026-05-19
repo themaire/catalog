@@ -2,6 +2,15 @@
 
 Backend API Express pour migrer le catalogue PHP vers une architecture frontend/backend séparée.
 
+## Configuration sécurité
+
+- Renseigner `MOD_PASSWORD_HASH` et/ou `ADMIN_PASSWORD_HASH` avec des hashes bcrypt.
+- Exemple de génération hash:
+
+```bash
+node -e "const b=require('bcryptjs'); b.hash('mon-mot-de-passe', 12).then(console.log)"
+```
+
 ## Endpoints principaux
 
 - `GET /api/health`
@@ -9,7 +18,8 @@ Backend API Express pour migrer le catalogue PHP vers une architecture frontend/
 - `GET /api/categories`
 - `GET /api/models?category=<name>`
 - `GET /api/models/:id`
-- `GET /api/models/:id/download`
+- `GET /api/models/:id/download` (rate-limited)
+- `GET /api/models/:id/thumbnail/:file`
 - `GET|POST|PUT|DELETE /api/admin/categories` (admin)
 - `GET|PUT /api/admin/domain` (admin)
 

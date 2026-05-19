@@ -49,7 +49,7 @@ sudo ./install.sh
 
 ## Modern migration workspace
 
-Un workspace de migration est disponible dans `/home/runner/work/catalog/catalog/modern`:
-- backend API Express: `/home/runner/work/catalog/catalog/modern/backend`
-- frontend Angular: `/home/runner/work/catalog/catalog/modern/frontend`
-- guide de migration: `/home/runner/work/catalog/catalog/modern/MIGRATION.md`
+Un workspace de migration est disponible dans `modern`:
+- backend API Express: `modern/backend`
+- frontend Angular: `modern/frontend`
+- guide de migration: `modern/MIGRATION.md`

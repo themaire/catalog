@@ -10,5 +10,6 @@ module.exports = {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'lib3d'
   },
-  modelsRoot: path.resolve(process.env.MODELS_ROOT || '/var/www/html/catalog/models')
+  modelsRoot: path.resolve(process.env.MODELS_ROOT || '/var/www/html/catalog/models'),
+  thumbnailsRoot: path.resolve(process.env.THUMBNAILS_ROOT || '/var/www/html/catalog/tmp/img')
 };

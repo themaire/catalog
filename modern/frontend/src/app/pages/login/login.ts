@@ -28,7 +28,15 @@ export class Login {
         this.auth.setSession(token, role);
         this.router.navigateByUrl('/');
       },
-      error: () => this.error.set('Identifiants invalides')
+      error: (error) => {
+        if (error?.status === 0) {
+          this.error.set('Impossible de joindre le serveur.');
+        } else if (error?.status === 401) {
+          this.error.set('Identifiants invalides');
+        } else {
+          this.error.set('Erreur serveur. Réessayez plus tard.');
+        }
+      }
     });
   }
 }

@@ -1,6 +1,9 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const { z } = require('zod');
 const { getRole } = require('../middleware/auth');
+const { thumbnailsRoot } = require('../config');
+const { safeResolve } = require('../utils/path');
 const {
   listCategories,
   listModelsByCategory,
@@ -10,6 +13,13 @@ const {
 } = require('../services/catalog');
 
 const router = express.Router();
+
+const downloadLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false
+});
 
 router.get('/categories', async (req, res, next) => {
   try {
@@ -49,7 +59,7 @@ router.get('/models/:id', async (req, res, next) => {
   }
 });
 
-router.get('/models/:id/download', async (req, res, next) => {
+router.get('/models/:id/download', downloadLimiter, async (req, res, next) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Invalid model id' });
 
@@ -59,6 +69,21 @@ router.get('/models/:id/download', async (req, res, next) => {
 
     await incrementDownloads(id);
     res.download(file.absolute, file.fileName);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/models/:id/thumbnail/:file', async (req, res, next) => {
+  const id = Number(req.params.id);
+  const fileName = req.params.file;
+  if (!Number.isInteger(id) || id <= 0 || !fileName) {
+    return res.status(400).json({ error: 'Invalid thumbnail request' });
+  }
+
+  try {
+    const filePath = safeResolve(thumbnailsRoot, fileName);
+    return res.sendFile(filePath);
   } catch (err) {
     next(err);
   }

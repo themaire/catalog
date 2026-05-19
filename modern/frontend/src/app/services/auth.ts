@@ -15,7 +15,7 @@ export class AuthService {
     return this.role() >= 2;
   }
 
-  get isModerate(): boolean {
+  get hasModerateAccess(): boolean {
     return this.role() >= 1;
   }
 
