@@ -1,0 +1,15 @@
+<h2>Catégories</h2>
+@if (loading()) {
+  <p>Chargement…</p>
+} @else if (error()) {
+  <p>{{ error() }}</p>
+} @else {
+  <ul>
+    @for (category of categories(); track category.id) {
+      <li>
+        <a [routerLink]="['/catalog', category.name]">{{ category.name }}</a>
+        <small>(niveau {{ category.rightLevel }})</small>
+      </li>
+    }
+  </ul>
+}
