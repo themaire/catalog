@@ -45,3 +45,11 @@ git pull
 #3
 Run the install script again :
 sudo ./install.sh
+
+
+## Modern migration workspace
+
+Un workspace de migration est disponible dans `modern`:
+- backend API Express: `modern/backend`
+- frontend Angular: `modern/frontend`
+- guide de migration: `modern/MIGRATION.md`

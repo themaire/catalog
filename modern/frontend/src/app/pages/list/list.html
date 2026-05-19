@@ -1,0 +1,17 @@
+<h2>Catalogue - {{ category() }}</h2>
+@if (loading()) {
+  <p>Chargement…</p>
+} @else if (error()) {
+  <p>{{ error() }}</p>
+} @else if (!models().length) {
+  <p>Aucun modèle dans cette catégorie.</p>
+} @else {
+  <ul>
+    @for (model of models(); track model.id) {
+      <li>
+        <a [routerLink]="['/model', model.id]">{{ model.name }}</a>
+        <small>DL: {{ model.downloads }}</small>
+      </li>
+    }
+  </ul>
+}

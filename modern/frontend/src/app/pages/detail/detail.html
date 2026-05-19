@@ -1,0 +1,20 @@
+@if (loading()) {
+  <p>Chargement…</p>
+} @else if (error()) {
+  <p>{{ error() }}</p>
+} @else if (model(); as m) {
+  <h2>{{ m.name }}</h2>
+  <p>Catégorie: {{ m.category }} | Téléchargements: {{ m.downloads }}</p>
+  <a [href]="downloadUrl(m.id)">Télécharger l'archive/dossier</a>
+
+  <h3>Fichiers</h3>
+  @if (!m.files.length) {
+    <p>Aucun fichier attaché.</p>
+  } @else {
+    <ul>
+      @for (file of m.files; track file.path + file.name) {
+        <li>{{ file.name }} ({{ file.type }}) - {{ file.size }} octets</li>
+      }
+    </ul>
+  }
+}

@@ -1,0 +1,14 @@
+header {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+main {
+  padding: 1rem;
+}

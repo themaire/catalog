@@ -1,0 +1,25 @@
+<h2>Administration</h2>
+@if (error()) {
+  <p>{{ error() }}</p>
+}
+
+<h3>Domain</h3>
+<input [(ngModel)]="domain" />
+<button (click)="saveDomain()">Sauvegarder Domain</button>
+
+<h3>Nouvelle catégorie</h3>
+<input [(ngModel)]="newCategoryName" placeholder="nom" />
+<input [(ngModel)]="newCategoryLevel" type="number" min="0" max="2" />
+<button (click)="createCategory()">Créer</button>
+
+<h3>Catégories</h3>
+<ul>
+  @for (category of categories(); track category.id) {
+    <li>
+      <input [(ngModel)]="category.name" />
+      <input [(ngModel)]="category.rightLevel" type="number" min="0" max="2" />
+      <button (click)="saveCategory(category)">Save</button>
+      <button (click)="removeCategory(category.id)">Delete</button>
+    </li>
+  }
+</ul>

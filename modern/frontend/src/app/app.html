@@ -1,0 +1,16 @@
+<header>
+  <h1>STL Catalog (Angular)</h1>
+  <nav>
+    <a routerLink="/">Accueil</a>
+    <a routerLink="/login">Connexion</a>
+    @if (auth.isAdmin) {
+      <a routerLink="/admin">Administration</a>
+    }
+    @if (auth.role() > 0) {
+      <button type="button" (click)="logout()">Déconnexion</button>
+    }
+  </nav>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>

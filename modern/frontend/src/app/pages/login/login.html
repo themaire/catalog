@@ -1,0 +1,15 @@
+<h2>Connexion</h2>
+<form (ngSubmit)="submit()">
+  <label>
+    Utilisateur
+    <input [(ngModel)]="username" name="username" required />
+  </label>
+  <label>
+    Mot de passe
+    <input [(ngModel)]="password" name="password" type="password" required />
+  </label>
+  <button type="submit">Se connecter</button>
+</form>
+@if (error()) {
+  <p>{{ error() }}</p>
+}
