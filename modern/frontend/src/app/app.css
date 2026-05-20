@@ -1,14 +1,79 @@
-header {
-  padding: 1rem;
-  border-bottom: 1px solid #ddd;
+.app-toolbar {
+  background: var(--stl-primary) !important;
+  color: var(--stl-text-on-primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 0.5rem;
 }
 
-nav {
+.toolbar-brand {
   display: flex;
-  gap: 1rem;
   align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
 }
 
-main {
-  padding: 1rem;
+.brand-icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+  color: var(--stl-accent);
+}
+
+.brand-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-left: 0.25rem;
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .brand-subtitle { display: inline; }
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.toolbar-nav a,
+.toolbar-nav button {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.9rem;
+}
+
+.toolbar-nav a.nav-active {
+  color: var(--stl-accent) !important;
+  border-bottom: 2px solid var(--stl-accent);
+}
+
+.toolbar-nav mat-icon {
+  font-size: 1.1rem;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+.logout-btn {
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 4px !important;
+}
+
+.app-main {
+  min-height: calc(100vh - 64px);
+  background: var(--stl-bg);
+  padding: 1.5rem;
 }

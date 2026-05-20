@@ -1,15 +1,36 @@
-<h2>Connexion</h2>
-<form (ngSubmit)="submit()">
-  <label>
-    Utilisateur
-    <input [(ngModel)]="username" name="username" required />
-  </label>
-  <label>
-    Mot de passe
-    <input [(ngModel)]="password" name="password" type="password" required />
-  </label>
-  <button type="submit">Se connecter</button>
-</form>
-@if (error()) {
-  <p>{{ error() }}</p>
-}
+<div class="login-wrapper">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="login-avatar">view_in_ar</mat-icon>
+      <mat-card-title>Connexion</mat-card-title>
+      <mat-card-subtitle>STL Catalog</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="submit()" class="login-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Utilisateur</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput [(ngModel)]="username" name="username" required autocomplete="username" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput [(ngModel)]="password" name="password" type="password" required autocomplete="current-password" />
+        </mat-form-field>
+
+        @if (error()) {
+          <div class="login-error">
+            <mat-icon>warning</mat-icon>
+            {{ error() }}
+          </div>
+        }
+
+        <button mat-raised-button color="primary" type="submit" class="full-width login-btn">
+          <mat-icon>login</mat-icon> Se connecter
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

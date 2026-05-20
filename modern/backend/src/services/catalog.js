@@ -6,7 +6,7 @@ const { safeResolve } = require('../utils/path');
 
 async function listCategories(accessLevel = 0) {
   return query(
-    'SELECT lib_id, lib_nom, lib_free FROM libelles WHERE lib_nom_id = 0 AND lib_free <= ? ORDER BY lib_nom ASC',
+    'SELECT lib_id, lib_nom, lib_free FROM libelles WHERE lib_nom_id = 1 AND lib_free <= ? ORDER BY lib_nom ASC',
     [accessLevel]
   );
 }
@@ -15,7 +15,7 @@ async function listModelsByCategory(categoryName, accessLevel = 0) {
   const rows = await query(
     `SELECT stl.stl_id, stl.stl_nom, stl.stl_date_ajout, stl.stl_nb_dl, stl.stl_thumbnail, stl.stl_path, lib.lib_nom as category, lib.lib_free
      FROM stl
-     INNER JOIN libelles lib ON lib.lib_id = stl.lib_id_categorie
+     INNER JOIN libelles lib ON lib.lib_id = stl.lib_id_categorie AND lib.lib_nom_id = 1
      WHERE lib.lib_nom = ? AND lib.lib_free <= ?
      ORDER BY stl.stl_date_ajout DESC`,
     [categoryName, accessLevel]
@@ -36,7 +36,7 @@ async function getModel(modelId, accessLevel = 0) {
   const rows = await query(
     `SELECT stl.stl_id, stl.stl_nom, stl.stl_date_ajout, stl.stl_nb_dl, stl.stl_printed, stl.stl_observations, stl.stl_path,
             lib.lib_nom as category, lib.lib_free
-      FROM stl INNER JOIN libelles lib ON lib.lib_id = stl.lib_id_categorie
+      FROM stl INNER JOIN libelles lib ON lib.lib_id = stl.lib_id_categorie AND lib.lib_nom_id = 1
       WHERE stl.stl_id = ? AND lib.lib_free <= ? LIMIT 1`,
     [modelId, accessLevel]
   );
@@ -79,20 +79,20 @@ async function getModelDownloadPath(modelId) {
 }
 
 async function listAdminCategories() {
-  return query('SELECT lib_id, lib_nom, lib_free FROM libelles WHERE lib_nom_id = 0 ORDER BY lib_nom ASC');
+  return query('SELECT lib_id, lib_nom, lib_free FROM libelles WHERE lib_nom_id = 1 ORDER BY lib_nom ASC');
 }
 
 async function createCategory(name, rightLevel) {
-  const result = await query('INSERT INTO libelles (lib_nom, lib_nom_id, lib_free) VALUES (?, 0, ?)', [name, rightLevel]);
+  const result = await query('INSERT INTO libelles (lib_nom, lib_nom_id, lib_free) VALUES (?, 1, ?)', [name, rightLevel]);
   return result.insertId;
 }
 
 async function updateCategory(id, name, rightLevel) {
-  await query('UPDATE libelles SET lib_nom = ?, lib_free = ? WHERE lib_id = ? AND lib_nom_id = 0', [name, rightLevel, id]);
+  await query('UPDATE libelles SET lib_nom = ?, lib_free = ? WHERE lib_id = ? AND lib_nom_id = 1', [name, rightLevel, id]);
 }
 
 async function deleteCategory(id) {
-  await query('DELETE FROM libelles WHERE lib_id = ? AND lib_nom_id = 0', [id]);
+  await query('DELETE FROM libelles WHERE lib_id = ? AND lib_nom_id = 1', [id]);
 }
 
 async function getDomain() {
@@ -107,8 +107,13 @@ async function getDomain() {
 
 async function updateDomain(value) {
   const domain = await getDomain();
-  if (!domain) throw new Error('Domain setting not found');
-  await query('UPDATE libelles SET lib_nom = ? WHERE lib_id = ?', [value, domain.lib_id]);
+  if (!domain) {
+    const domainTypeRows = await query(`SELECT lib_nom_id FROM libelles_noms WHERE lib_nom_nom = 'domain' LIMIT 1`);
+    if (!domainTypeRows.length) throw new Error('Domain type not found in libelles_noms');
+    await query('INSERT INTO libelles (lib_nom, lib_nom_id, lib_free) VALUES (?, ?, NULL)', [value, domainTypeRows[0].lib_nom_id]);
+  } else {
+    await query('UPDATE libelles SET lib_nom = ? WHERE lib_id = ?', [value, domain.lib_id]);
+  }
 }
 
 module.exports = {

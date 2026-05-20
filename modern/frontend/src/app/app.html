@@ -1,16 +1,34 @@
-<header>
-  <h1>STL Catalog (Angular)</h1>
-  <nav>
-    <a routerLink="/">Accueil</a>
-    <a routerLink="/login">Connexion</a>
+<mat-toolbar class="app-toolbar" color="primary">
+  <a routerLink="/" class="toolbar-brand">
+    <mat-icon class="brand-icon">view_in_ar</mat-icon>
+    <span class="brand-title">STL Catalog</span>
+    <span class="brand-subtitle">My STL Collection</span>
+  </a>
+
+  <span class="toolbar-spacer"></span>
+
+  <nav class="toolbar-nav">
+    <a mat-button routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon>home</mat-icon> Accueil
+    </a>
+    @if (auth.role() === 0) {
+      <a mat-button routerLink="/login">
+        <mat-icon>login</mat-icon> Connexion
+      </a>
+    }
     @if (auth.isAdmin) {
-      <a routerLink="/admin">Administration</a>
+      <a mat-button routerLink="/admin" routerLinkActive="nav-active">
+        <mat-icon>admin_panel_settings</mat-icon> Administration
+      </a>
     }
     @if (auth.role() > 0) {
-      <button type="button" (click)="logout()">Déconnexion</button>
+      <button mat-button (click)="logout()" class="logout-btn">
+        <mat-icon>logout</mat-icon> Déconnexion
+      </button>
     }
   </nav>
-</header>
-<main>
+</mat-toolbar>
+
+<main class="app-main">
   <router-outlet></router-outlet>
 </main>

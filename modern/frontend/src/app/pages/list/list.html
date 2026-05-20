@@ -1,17 +1,47 @@
-<h2>Catalogue - {{ category() }}</h2>
-@if (loading()) {
-  <p>Chargement…</p>
-} @else if (error()) {
-  <p>{{ error() }}</p>
-} @else if (!models().length) {
-  <p>Aucun modèle dans cette catégorie.</p>
-} @else {
-  <ul>
-    @for (model of models(); track model.id) {
-      <li>
-        <a [routerLink]="['/model', model.id]">{{ model.name }}</a>
-        <small>DL: {{ model.downloads }}</small>
-      </li>
-    }
-  </ul>
-}
+<div class="list-container">
+  <div class="list-header">
+    <a mat-icon-button routerLink="/" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <div>
+      <h2 class="list-title">{{ category() }}</h2>
+      <span class="list-count">{{ models().length }} modèle(s)</span>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="spinner-wrapper">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content><mat-icon>error_outline</mat-icon> {{ error() }}</mat-card-content>
+    </mat-card>
+  } @else if (!models().length) {
+    <div class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>Aucun modèle dans cette catégorie.</p>
+    </div>
+  } @else {
+    <div class="models-grid">
+      @for (model of models(); track model.id) {
+        <mat-card class="model-card" [routerLink]="['/model', model.id]">
+          @if (model.thumbnail) {
+            <img mat-card-image [src]="model.thumbnail" [alt]="model.name" class="model-thumb" />
+          } @else {
+            <div class="model-thumb-placeholder">
+              <mat-icon>view_in_ar</mat-icon>
+            </div>
+          }
+          <mat-card-content>
+            <p class="model-name">{{ model.name }}</p>
+            <div class="model-meta">
+              <span><mat-icon class="meta-icon">download</mat-icon>{{ model.downloads }}</span>
+              <span class="model-date">{{ model.addedAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

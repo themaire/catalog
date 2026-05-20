@@ -1,0 +1,133 @@
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.error-card {
+  background: #5c1010 !important;
+  color: #fff !important;
+}
+
+.detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.back-btn {
+  color: var(--stl-accent) !important;
+}
+
+.detail-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 1.2rem;
+}
+
+@media (max-width: 700px) {
+  .detail-layout { grid-template-columns: 1fr; }
+}
+
+.info-card, .files-card {
+  background: var(--stl-primary) !important;
+  color: #fff !important;
+}
+
+.card-avatar-icon {
+  color: var(--stl-accent) !important;
+  background: transparent !important;
+}
+
+.info-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.4rem 1rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+dt {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  color: var(--stl-accent);
+  white-space: nowrap;
+}
+
+dd {
+  margin: 0;
+  color: rgba(255,255,255,0.85);
+}
+
+.dl-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+.files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.85rem;
+}
+
+.file-icon {
+  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--stl-lavender);
+  flex-shrink: 0;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-type {
+  background: rgba(121, 153, 217, 0.3);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.72rem;
+  color: var(--stl-lavender);
+  flex-shrink: 0;
+}
+
+.file-size {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.no-files {
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  padding: 1rem;
+}

@@ -1,25 +1,83 @@
-<h2>Administration</h2>
-@if (error()) {
-  <p>{{ error() }}</p>
-}
+<div class="admin-container">
+  <h2 class="admin-title"><mat-icon>admin_panel_settings</mat-icon> Administration</h2>
 
-<h3>Domain</h3>
-<input [(ngModel)]="domain" />
-<button (click)="saveDomain()">Sauvegarder Domain</button>
-
-<h3>Nouvelle catégorie</h3>
-<input [(ngModel)]="newCategoryName" placeholder="nom" />
-<input [(ngModel)]="newCategoryLevel" type="number" min="0" max="2" />
-<button (click)="createCategory()">Créer</button>
-
-<h3>Catégories</h3>
-<ul>
-  @for (category of categories(); track category.id) {
-    <li>
-      <input [(ngModel)]="category.name" />
-      <input [(ngModel)]="category.rightLevel" type="number" min="0" max="2" />
-      <button (click)="saveCategory(category)">Save</button>
-      <button (click)="removeCategory(category.id)">Delete</button>
-    </li>
+  @if (error()) {
+    <div class="admin-error">
+      <mat-icon>warning</mat-icon> {{ error() }}
+    </div>
   }
-</ul>
+
+  <!-- Domain -->
+  <mat-card class="admin-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="card-av">language</mat-icon>
+      <mat-card-title>Domaine</mat-card-title>
+      <mat-card-subtitle>URL de base du catalogue</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>URL du domaine</mat-label>
+        <mat-icon matPrefix>link</mat-icon>
+        <input matInput [(ngModel)]="domain" name="domain" type="url" />
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="saveDomain()">
+        <mat-icon>save</mat-icon> Sauvegarder
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Nouvelle catégorie -->
+  <mat-card class="admin-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="card-av">add_circle</mat-icon>
+      <mat-card-title>Nouvelle catégorie</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="flex-grow">
+          <mat-label>Nom</mat-label>
+          <input matInput [(ngModel)]="newCategoryName" name="newCategoryName" placeholder="ex: Figurines" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" style="width:120px">
+          <mat-label>Niveau</mat-label>
+          <input matInput [(ngModel)]="newCategoryLevel" name="newCategoryLevel" type="number" min="0" max="2" />
+        </mat-form-field>
+        <button mat-raised-button color="accent" (click)="createCategory()">
+          <mat-icon>add</mat-icon> Créer
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Liste des catégories -->
+  <mat-card class="admin-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="card-av">category</mat-icon>
+      <mat-card-title>Catégories ({{ categories().length }})</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="categories-list">
+        @for (category of categories(); track category.id) {
+          <div class="category-row">
+            <mat-form-field appearance="outline" class="flex-grow">
+              <mat-label>Nom</mat-label>
+              <input matInput [(ngModel)]="category.name" [name]="'cat-name-' + category.id" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width:120px">
+              <mat-label>Niveau</mat-label>
+              <input matInput [(ngModel)]="category.rightLevel" [name]="'cat-lvl-' + category.id" type="number" min="0" max="2" />
+            </mat-form-field>
+            <button mat-icon-button color="primary" (click)="saveCategory(category)" matTooltip="Enregistrer">
+              <mat-icon>save</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removeCategory(category.id)" matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

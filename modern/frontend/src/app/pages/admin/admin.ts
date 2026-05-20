@@ -1,17 +1,23 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../services/api';
 import { Category } from '../../models';
 
 @Component({
   selector: 'app-admin',
-  imports: [FormsModule],
+  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
 export class Admin implements OnInit {
   categories = signal<Category[]>([]);
-  domain = signal('');
+  domain = '';
   error = signal<string | null>(null);
 
   newCategoryName = '';
@@ -30,7 +36,7 @@ export class Admin implements OnInit {
       error: () => this.error.set('Impossible de charger les catégories admin')
     });
     this.api.domain().subscribe({
-      next: (domain) => this.domain.set(domain.value),
+      next: (domain) => this.domain = domain.value,
       error: () => this.error.set('Impossible de charger le domaine')
     });
   }
@@ -61,7 +67,7 @@ export class Admin implements OnInit {
   }
 
   saveDomain(): void {
-    this.api.updateDomain(this.domain()).subscribe({
+    this.api.updateDomain(this.domain).subscribe({
       next: () => this.reload(),
       error: () => this.error.set('Échec de mise à jour du domaine')
     });

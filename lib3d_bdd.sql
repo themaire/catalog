@@ -44,12 +44,14 @@ DELIMITER ;
 --
 
 CREATE TABLE `fichiers` (
-  `fi_id` int(10) UNSIGNED NOT NULL,
+  `fi_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `stl_id` int(10) UNSIGNED NOT NULL,
   `fi_nom` text NOT NULL,
   `fi_path` text NOT NULL,
   `lib_id_type` int(10) UNSIGNED NOT NULL,
-  `fi_taille` float DEFAULT NULL
+  `fi_taille` float DEFAULT NULL,
+  PRIMARY KEY (`fi_id`),
+  KEY `fk_stl` (`stl_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -74,10 +76,11 @@ CREATE TABLE `fichiers_stl` (
 --
 
 CREATE TABLE `libelles` (
-  `lib_id` int(10) UNSIGNED NOT NULL,
+  `lib_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lib_nom` text NOT NULL,
   `lib_nom_id` int(11) NOT NULL,
-  `lib_free` tinyint(1) DEFAULT NULL
+  `lib_free` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`lib_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -85,22 +88,22 @@ CREATE TABLE `libelles` (
 --
 
 INSERT INTO `libelles` (`lib_id`, `lib_nom`, `lib_nom_id`, `lib_free`) VALUES
-(1, 'http://mydomain.com', 2, NULL),
-(2, 'thingiverse', 0, 1),
-(6, 'jpeg', 1, NULL),
-(7, 'jpg', 1, NULL),
-(8, 'png', 1, NULL),
-(9, 'stl', 1, NULL),
-(10, 'txt', 1, NULL),
-(11, 'url', 1, NULL),
-(12, 'html', 1, NULL),
-(13, 'pdf', 1, NULL),
-(14, 'gcode', 1, NULL),
-(15, 'zip', 1, NULL),
-(16, 'rar', 1, NULL),
-(17, 'gif', 1, NULL),
-(18, 'obj', 1, NULL),
-(19, '7z', 1, NULL);
+(1, 'http://mydomain.com', 3, NULL),
+(2, 'thingiverse', 1, 1),
+(6, 'jpeg', 2, NULL),
+(7, 'jpg', 2, NULL),
+(8, 'png', 2, NULL),
+(9, 'stl', 2, NULL),
+(10, 'txt', 2, NULL),
+(11, 'url', 2, NULL),
+(12, 'html', 2, NULL),
+(13, 'pdf', 2, NULL),
+(14, 'gcode', 2, NULL),
+(15, 'zip', 2, NULL),
+(16, 'rar', 2, NULL),
+(17, 'gif', 2, NULL),
+(18, 'obj', 2, NULL),
+(19, '7z', 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -109,8 +112,9 @@ INSERT INTO `libelles` (`lib_id`, `lib_nom`, `lib_nom_id`, `lib_free`) VALUES
 --
 
 CREATE TABLE `libelles_noms` (
-  `lib_nom_id` int(10) UNSIGNED NOT NULL,
-  `lib_nom_nom` text NOT NULL
+  `lib_nom_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lib_nom_nom` text NOT NULL,
+  PRIMARY KEY (`lib_nom_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -118,9 +122,9 @@ CREATE TABLE `libelles_noms` (
 --
 
 INSERT INTO `libelles_noms` (`lib_nom_id`, `lib_nom_nom`) VALUES
-(0, 'categorie'),
-(1, 'extension'),
-(2, 'domain');
+(1, 'categorie'),
+(2, 'extension'),
+(3, 'domain');
 
 -- --------------------------------------------------------
 
@@ -129,15 +133,16 @@ INSERT INTO `libelles_noms` (`lib_nom_id`, `lib_nom_nom`) VALUES
 --
 
 CREATE TABLE `stl` (
-  `stl_id` int(10) UNSIGNED NOT NULL,
+  `stl_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `stl_nom` text NOT NULL,
-  `stl_date_ajout` date DEFAULT current_timestamp(),
+  `stl_date_ajout` date DEFAULT (CURRENT_DATE),
   `lib_id_categorie` int(11) DEFAULT NULL,
   `stl_path` text NOT NULL,
   `stl_nb_dl` int(11) DEFAULT NULL,
   `stl_printed` tinyint(1) DEFAULT NULL,
   `stl_observations` text DEFAULT NULL,
-  `stl_thumbnail` text DEFAULT NULL
+  `stl_thumbnail` text DEFAULT NULL,
+  PRIMARY KEY (`stl_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -153,12 +158,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Index pour les tables déchargées
 --
 
---
--- Index pour la table `fichiers`
---
-ALTER TABLE `fichiers`
-  ADD PRIMARY KEY (`fi_id`),
-  ADD KEY `fk_stl` (`stl_id`);
+
 
 --
 -- Index pour la table `libelles`
@@ -173,21 +173,13 @@ ALTER TABLE `libelles`
 ALTER TABLE `libelles_noms`
   ADD UNIQUE KEY `lib_nom_id` (`lib_nom_id`);
 
---
--- Index pour la table `stl`
---
-ALTER TABLE `stl`
-  ADD PRIMARY KEY (`stl_id`);
+
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
---
--- AUTO_INCREMENT pour la table `fichiers`
---
-ALTER TABLE `fichiers`
-  MODIFY `fi_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 
 --
 -- AUTO_INCREMENT pour la table `libelles`
@@ -201,11 +193,7 @@ ALTER TABLE `libelles`
 ALTER TABLE `libelles_noms`
   MODIFY `lib_nom_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT pour la table `stl`
---
-ALTER TABLE `stl`
-  MODIFY `stl_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 
 --
 -- Contraintes pour les tables déchargées
@@ -221,3 +209,33 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `users`
+--
+-- Stocke les comptes utilisateurs pouvant s'authentifier sur l'application moderne.
+--
+-- Champ `role` :
+--   1 = Modérateur  → peut consulter et modifier le catalogue
+--   2 = Administrateur → accès complet (gestion des utilisateurs incluse)
+--
+-- Champ `active` :
+--   0 = compte désactivé (ne peut plus se connecter)
+--   1 = compte actif
+--
+
+CREATE TABLE `users` (
+  `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `username`      VARCHAR(100) NOT NULL,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `role`          TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '1=moderateur, 2=admin',
+  `active`        TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at`    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Comptes utilisateurs. role: 1=moderateur, 2=admin';
+
+INSERT INTO users (username, password_hash, role)
+VALUES ('admin', '$2b$10$Ot7qfQANVERfbpRLM7aEl.cf31hho4q/kHwx.UpirPN.jkI4WB3Dq', 2);

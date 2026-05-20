@@ -1,20 +1,67 @@
 @if (loading()) {
-  <p>Chargement…</p>
+  <div class="spinner-wrapper"><mat-spinner diameter="48"></mat-spinner></div>
 } @else if (error()) {
-  <p>{{ error() }}</p>
+  <mat-card class="error-card">
+    <mat-card-content><mat-icon>error_outline</mat-icon> {{ error() }}</mat-card-content>
+  </mat-card>
 } @else if (model(); as m) {
-  <h2>{{ m.name }}</h2>
-  <p>Catégorie: {{ m.category }} | Téléchargements: {{ m.downloads }}</p>
-  <a [href]="downloadUrl(m.id)">Télécharger l'archive/dossier</a>
+  <div class="detail-container">
+    <div class="detail-header">
+      <a mat-icon-button onclick="history.back()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <h2 class="detail-title">{{ m.name }}</h2>
+    </div>
 
-  <h3>Fichiers</h3>
-  @if (!m.files.length) {
-    <p>Aucun fichier attaché.</p>
-  } @else {
-    <ul>
-      @for (file of m.files; track file.path + file.name) {
-        <li>{{ file.name }} ({{ file.type }}) - {{ file.size }} octets</li>
-      }
-    </ul>
-  }
+    <div class="detail-layout">
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="card-avatar-icon">info</mat-icon>
+          <mat-card-title>Informations</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <dl class="info-list">
+            <dt><mat-icon class="dl-icon">category</mat-icon> Catégorie</dt>
+            <dd>{{ m.category }}</dd>
+            <dt><mat-icon class="dl-icon">download</mat-icon> Téléchargements</dt>
+            <dd>{{ m.downloads }}</dd>
+            <dt><mat-icon class="dl-icon">print</mat-icon> Imprimé</dt>
+            <dd>{{ m.printed ? 'Oui' : 'Non' }}</dd>
+            @if (m.notes) {
+              <dt><mat-icon class="dl-icon">notes</mat-icon> Notes</dt>
+              <dd>{{ m.notes }}</dd>
+            }
+          </dl>
+        </mat-card-content>
+        <mat-card-actions>
+          <a mat-raised-button color="primary" [href]="downloadUrl(m.id)">
+            <mat-icon>archive</mat-icon> Télécharger l'archive
+          </a>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="files-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="card-avatar-icon">folder</mat-icon>
+          <mat-card-title>Fichiers ({{ m.files.length }})</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (!m.files.length) {
+            <p class="no-files">Aucun fichier attaché.</p>
+          } @else {
+            <div class="files-list">
+              @for (file of m.files; track file.path + file.name) {
+                <div class="file-row">
+                  <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-type mat-badge">{{ file.type }}</span>
+                  <span class="file-size">{{ (file.size / 1024 | number:'1.0-0') }} Ko</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 }

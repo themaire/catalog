@@ -1,1 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+/* ── Palette originale STL Catalog ── */
+:root {
+  --stl-primary:          #484F73;
+  --stl-primary-dark:     #343a56;
+  --stl-primary-light:    #6b739e;
+  --stl-accent:           #F2D6A2;
+  --stl-accent-dark:      #c9a96a;
+  --stl-lavender:         #7999D9;
+  --stl-bg:               #686f78;
+  --stl-bg-dark:          #3d4249;
+  --stl-text-on-primary:  #ffffff;
+  --stl-text-on-accent:   #2c2410;
+
+  /* Override Angular Material M3 system tokens */
+  --mat-sys-primary:              #484F73;
+  --mat-sys-on-primary:           #ffffff;
+  --mat-sys-primary-container:    #c5caf5;
+  --mat-sys-on-primary-container: #0d1040;
+  --mat-sys-secondary:            #c9a96a;
+  --mat-sys-on-secondary:         #2c2410;
+  --mat-sys-surface:              #f7f5f0;
+  --mat-sys-surface-container:    #ede9e0;
+  --mat-sys-background:           #f5f3ee;
+  --mat-sys-on-background:        #1c1b18;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--stl-bg);
+  color: #1c1b18;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Scrollbar custom */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--stl-bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--stl-primary-light); border-radius: 3px; }

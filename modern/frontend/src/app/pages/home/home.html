@@ -1,15 +1,33 @@
-<h2>Catégories</h2>
-@if (loading()) {
-  <p>Chargement…</p>
-} @else if (error()) {
-  <p>{{ error() }}</p>
-} @else {
-  <ul>
-    @for (category of categories(); track category.id) {
-      <li>
-        <a [routerLink]="['/catalog', category.name]">{{ category.name }}</a>
-        <small>(niveau {{ category.rightLevel }})</small>
-      </li>
-    }
-  </ul>
-}
+<div class="home-container">
+  <div class="home-hero">
+    <mat-icon class="hero-icon">view_in_ar</mat-icon>
+    <h1 class="hero-title">Catalogue STL</h1>
+    <p class="hero-sub">Explorez la collection de modèles 3D</p>
+  </div>
+
+  @if (loading()) {
+    <div class="spinner-wrapper">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <h2 class="section-title">Catégories</h2>
+    <div class="categories-grid">
+      @for (category of categories(); track category.id) {
+        <mat-card class="category-card" [routerLink]="['/catalog', category.name]">
+          <mat-card-content>
+            <mat-icon class="category-icon">folder_open</mat-icon>
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-badge">niveau {{ category.rightLevel }}</span>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>
