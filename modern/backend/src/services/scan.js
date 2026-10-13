@@ -11,7 +11,8 @@
 const fs = require('fs');
 const path = require('path');
 const { query } = require('../db');
-const { modelsRoot, thumbnailsRoot, extractRoot, scan: scanConfig } = require('../config');
+const { thumbnailsRoot, extractRoot, scan: scanConfig } = require('../config');
+const { getModelsRoot, displayPath } = require('./settings');
 const { getExt, isArchive, isIgnoredName, listArchive, extractEntry } = require('../utils/archive');
 const { MODELS_PREFIX } = require('../utils/models');
 
@@ -30,7 +31,7 @@ async function visibleEntries(dir) {
 }
 
 // Retourne [{ category, stlPath, name, absolute, archive }]
-async function discoverModels() {
+async function discoverModels(modelsRoot = getModelsRoot()) {
   const models = [];
   for (const cat of await visibleEntries(modelsRoot)) {
     if (!cat.isDirectory()) continue;
@@ -172,7 +173,7 @@ async function doScan() {
   const discovered = await discoverModels();
   // Garde-fou repris de 2bdd.php : un dossier models/ vide (montage absent...) ne doit pas vider la base.
   if (discovered.length === 0) {
-    throw new Error(`Aucun modèle trouvé dans ${modelsRoot} : scan annulé pour ne pas vider la base`);
+    throw new Error(`Aucun modèle trouvé dans ${displayPath(getModelsRoot())} : scan annulé pour ne pas vider la base`);
   }
 
   const categories = await loadLibelles(1);

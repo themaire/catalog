@@ -14,6 +14,14 @@ module.exports = {
   thumbnailsRoot: path.resolve(process.env.THUMBNAILS_ROOT || '/var/www/html/catalog/tmp/img'),
   // Cache des fichiers extraits des archives à la demande + zips de téléchargement des dossiers.
   extractRoot: path.resolve(process.env.EXTRACT_ROOT || '/var/www/html/catalog/tmp/extract'),
+  // Emplacements de l'hôte montés en lecture seule, explorables par l'assistant pour choisir
+  // le dossier des modèles. hostLabel = chemin affiché (tel qu'il existe sur l'hôte).
+  browseRoots: [
+    { path: path.resolve(process.env.MODELS_ROOT || '/var/www/html/catalog/models'), hostLabel: 'modeles (dossier du projet)', label: 'Dossier du projet' },
+    { path: '/host/media', hostLabel: '/media', label: 'Disques USB (/media)' },
+    { path: '/host/mnt', hostLabel: '/mnt', label: 'Montages (/mnt)' },
+    { path: '/host/home', hostLabel: '/home', label: 'Dossiers personnels (/home)' }
+  ],
   scan: {
     // Expression cron (node-cron) ; vide = pas de scan planifié.
     cron: process.env.SCAN_CRON ?? '*/10 * * * *',

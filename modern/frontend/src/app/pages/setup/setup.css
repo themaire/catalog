@@ -1,0 +1,68 @@
+.wizard-card {
+  max-width: 680px;
+}
+
+.wizard {
+  margin-top: 0.5rem;
+  background: transparent;
+  --mat-stepper-container-color: transparent;
+  --mat-stepper-header-label-text-color: rgba(255, 255, 255, 0.6);
+  --mat-stepper-header-selected-state-label-text-color: #fff;
+  --mat-stepper-header-icon-background-color: rgba(255, 255, 255, 0.25);
+  --mat-stepper-header-selected-state-icon-background-color: var(--stl-accent);
+  --mat-stepper-header-selected-state-icon-foreground-color: var(--stl-text-on-accent);
+  --mat-stepper-header-done-state-icon-background-color: var(--stl-accent);
+  --mat-stepper-header-done-state-icon-foreground-color: var(--stl-text-on-accent);
+  --mat-stepper-header-edit-state-icon-background-color: var(--stl-accent);
+  --mat-stepper-header-edit-state-icon-foreground-color: var(--stl-text-on-accent);
+  --mat-stepper-line-color: rgba(255, 255, 255, 0.25);
+  --mat-stepper-header-hover-state-layer-color: transparent;
+  --mat-stepper-header-focus-state-layer-color: transparent;
+}
+
+.hint {
+  margin: 0.8rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hint code,
+.done code {
+  color: var(--stl-accent);
+}
+
+.step-error {
+  margin-top: 0.6rem;
+}
+
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.done-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: var(--stl-accent);
+}
+
+.done-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.8rem;
+  --mat-button-outlined-label-text-color: var(--stl-accent);
+  --mat-button-outlined-outline-color: var(--stl-accent);
+}
+
+/* Navigation uniquement par les boutons de l'assistant */
+.wizard ::ng-deep .mat-step-header {
+  pointer-events: none;
+}

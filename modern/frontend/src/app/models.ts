@@ -53,3 +53,20 @@ export interface ScanStatus {
   /** En cas d'échec, seuls `error` et `finishedAt` sont renseignés. */
   lastResult: (ScanResult & { error?: string }) | null;
 }
+
+export interface LibraryInfo {
+  current: { path: string; display: string };
+  roots: { label: string; path: string; display: string }[];
+}
+
+export interface BrowseResult {
+  path: string;
+  display: string;
+  parent: string | null;
+  dirs: { name: string; path: string }[];
+  preview: { models: number; categories: { name: string; models: number }[] };
+}
+
+export interface LibraryUpdate extends LibraryInfo {
+  scan: ScanResult & { error?: string };
+}

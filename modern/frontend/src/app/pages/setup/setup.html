@@ -1,38 +1,86 @@
 <div class="login-wrapper">
-  <mat-card class="login-card">
+  <mat-card class="login-card wizard-card">
     <mat-card-header>
       <mat-icon mat-card-avatar class="login-avatar">waving_hand</mat-icon>
       <mat-card-title>Bienvenue !</mat-card-title>
-      <mat-card-subtitle>Premier lancement de STL Catalog</mat-card-subtitle>
+      <mat-card-subtitle>Configuration de STL Catalog en deux étapes</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
-      <p class="setup-intro">
-        Choisissez le mot de passe du compte administrateur <strong>admin</strong>.
-        Il servira à vous connecter et à gérer le catalogue.
-      </p>
-      <form (ngSubmit)="submit()" class="login-form">
-        <input type="text" name="username" value="admin" autocomplete="username" hidden />
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Mot de passe (8 caractères min.)</mat-label>
-          <mat-icon matPrefix>key</mat-icon>
-          <input matInput [(ngModel)]="password" name="password" type="password" required autocomplete="new-password" />
-        </mat-form-field>
+      <mat-stepper class="wizard" [selectedIndex]="step()">
+        <!-- 1. Mot de passe admin -->
+        <mat-step [completed]="passwordDone()" [editable]="false" label="Administrateur">
+          <p class="setup-intro">
+            Choisissez le mot de passe du compte administrateur <strong>admin</strong>.
+            Il servira à vous connecter et à gérer le catalogue.
+          </p>
+          <form (ngSubmit)="submitPassword()" class="login-form">
+            <input type="text" name="username" value="admin" autocomplete="username" hidden />
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Mot de passe (8 caractères min.)</mat-label>
+              <mat-icon matPrefix>key</mat-icon>
+              <input matInput [(ngModel)]="password" name="password" type="password" required autocomplete="new-password" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirmer le mot de passe</mat-label>
+              <mat-icon matPrefix>key</mat-icon>
+              <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password" />
+            </mat-form-field>
+            @if (error() && !passwordDone()) {
+              <div class="login-error"><mat-icon>warning</mat-icon> {{ error() }}</div>
+            }
+            <button mat-raised-button color="primary" type="submit" class="full-width login-btn" [disabled]="saving()">
+              <mat-icon>arrow_forward</mat-icon> Continuer
+            </button>
+          </form>
+        </mat-step>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Confirmer le mot de passe</mat-label>
-          <mat-icon matPrefix>key</mat-icon>
-          <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password" />
-        </mat-form-field>
+        <!-- 2. Dossier des modèles -->
+        <mat-step [completed]="!!result()" [editable]="false" label="Dossier des modèles">
+          <p class="setup-intro">
+            Où sont rangés vos modèles 3D ? Naviguez jusqu'au dossier qui contient vos catégories
+            (un sous-dossier par catégorie), puis validez.
+          </p>
+          @if (passwordDone()) {
+            <app-folder-picker [busy]="importing()" confirmLabel="Utiliser ce dossier" (chosen)="chooseFolder($event)" />
+          }
+          @if (error() && passwordDone()) {
+            <div class="login-error step-error"><mat-icon>warning</mat-icon> {{ error() }}</div>
+          }
+          <p class="hint">
+            Votre disque n'apparaît pas ? Seuls <code>/media</code>, <code>/mnt</code>, <code>/home</code> et le
+            dossier <code>modeles</code> du projet sont visibles. Vous pourrez changer ce choix plus tard dans
+            Administration.
+          </p>
+        </mat-step>
 
-        @if (error()) {
-          <div class="login-error"><mat-icon>warning</mat-icon> {{ error() }}</div>
-        }
-
-        <button mat-raised-button color="primary" type="submit" class="full-width login-btn" [disabled]="saving()">
-          <mat-icon>rocket_launch</mat-icon> Démarrer
-        </button>
-      </form>
+        <!-- 3. Terminé -->
+        <mat-step label="Terminé">
+          @if (result(); as r) {
+            <div class="done">
+              <mat-icon class="done-icon">celebration</mat-icon>
+              @if (r.scan.error) {
+                <p>Dossier enregistré : <code>{{ r.current.display }}</code></p>
+                <div class="login-error"><mat-icon>warning</mat-icon> {{ r.scan.error }}</div>
+                <p class="hint">Ajoutez des modèles dans ce dossier : ils seront détectés au prochain scan (toutes les 10 min).</p>
+              } @else {
+                <p>
+                  <strong>{{ r.scan.models }} modèle(s)</strong> trouvés dans
+                  <code>{{ r.current.display }}</code>.
+                </p>
+                <p class="hint">
+                  Les nouvelles catégories sont réservées aux utilisateurs connectés. Pour en rendre une visible
+                  de tous, passez son niveau à 0 dans Administration.
+                </p>
+              }
+              <div class="done-actions">
+                <a mat-stroked-button routerLink="/admin"><mat-icon>admin_panel_settings</mat-icon> Administration</a>
+                <a mat-raised-button color="primary" routerLink="/"><mat-icon>view_in_ar</mat-icon> Voir le catalogue</a>
+              </div>
+            </div>
+          }
+        </mat-step>
+      </mat-stepper>
     </mat-card-content>
   </mat-card>
 </div>

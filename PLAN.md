@@ -170,6 +170,12 @@ Réalisé (notes) :
 - Nouveau `install.sh` (pour une installation chez un tiers) : vérifie 64 bits/RAM, installe
   Docker si absent (get.docker.com), génère `.env`, lance la stack, attend qu'elle réponde.
   Testé sur une copie neuve du dépôt en parallèle de l'instance piserve.
+- Assistant de premier lancement (`/setup`, 3 étapes) : mot de passe admin puis choix du
+  dossier des modèles dans un explorateur (`/media` en propagation rslave, `/mnt`, `/home`,
+  `./modeles`, tous en lecture seule), avec aperçu avant validation. Choix enregistré dans la
+  table `settings` (créée au démarrage si absente), modifiable dans Administration. Le
+  conteneur ne peut pas changer ses propres montages : on monte les emplacements usuels et on
+  choisit dedans (approche Jellyfin/Immich). Catégories vides masquées côté public.
 - Compose : plus de `container_name` (plusieurs instances possibles sur une machine) ; ports
   de debug MariaDB/API déplacés dans `docker-compose.debug.yml` (évite un conflit avec un
   MariaDB déjà présent chez l'hôte).

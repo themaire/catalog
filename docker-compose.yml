@@ -41,6 +41,11 @@ services:
       # Lecture seule : le backend ne modifie jamais les modèles, il extrait dans le cache.
       - ${MODELS_DIR:-./modeles}:/data/models:ro
       - extract-cache:/cache
+      # Emplacements de l'hôte que l'assistant peut explorer pour choisir le dossier des modèles
+      # (lecture seule). rslave : un disque USB monté après le démarrage apparaît quand même.
+      - { type: bind, source: /media, target: /host/media, read_only: true, bind: { propagation: rslave } }
+      - { type: bind, source: /mnt, target: /host/mnt, read_only: true, bind: { propagation: rslave } }
+      - { type: bind, source: /home, target: /host/home, read_only: true }
 
   frontend:
     build: ./modern/frontend

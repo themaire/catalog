@@ -1,5 +1,5 @@
 const path = require('path');
-const { modelsRoot } = require('../config');
+const { getModelsRoot } = require('../services/settings');
 const { safeResolve } = require('./path');
 
 // stl.stl_path est stocké comme en PHP, relatif à la racine de l'ancien site : "models/<catégorie>[/<englobant>]".
@@ -9,7 +9,7 @@ const MODELS_PREFIX = 'models';
 function modelAbsolutePath(stlPath, stlNom) {
   const segments = stlPath.split('/').filter(Boolean);
   if (segments[0] === MODELS_PREFIX) segments.shift();
-  return safeResolve(modelsRoot, path.join(...segments, stlNom));
+  return safeResolve(getModelsRoot(), path.join(...segments, stlNom));
 }
 
 module.exports = { MODELS_PREFIX, modelAbsolutePath };

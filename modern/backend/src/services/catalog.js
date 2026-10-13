@@ -2,7 +2,10 @@ const { query } = require('../db');
 
 async function listCategories(accessLevel = 0) {
   return query(
-    'SELECT lib_id, lib_nom, lib_free FROM libelles WHERE lib_nom_id = 1 AND lib_free <= ? ORDER BY lib_nom ASC',
+    // Catégories vides masquées (ex. après un changement de dossier des modèles) ; l'admin les voit toutes.
+    `SELECT lib_id, lib_nom, lib_free FROM libelles
+     WHERE lib_nom_id = 1 AND lib_free <= ? AND EXISTS (SELECT 1 FROM stl WHERE stl.lib_id_categorie = libelles.lib_id)
+     ORDER BY lib_nom ASC`,
     [accessLevel]
   );
 }

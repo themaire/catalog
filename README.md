@@ -49,13 +49,20 @@ Le script :
 Le catalogue est ensuite accessible sur `http://<ip-du-pi>:8090` (port réglable via
 `FRONTEND_PORT` dans `.env`). Il redémarre tout seul après un reboot ou un plantage.
 
-**Premier lancement** : la première ouverture du site demande de choisir le mot de passe du
-compte administrateur `admin`. La première personne du réseau qui ouvre le site le choisit : le
-faire juste après l'installation. Il se change ensuite dans *Mon compte*.
+**Premier lancement** : la première ouverture du site lance un assistant en deux étapes :
+
+1. choisir le mot de passe du compte administrateur `admin` ;
+2. choisir le dossier où sont rangés les modèles, avec un explorateur qui montre ce qui y est
+   détecté (catégories, nombre de modèles) avant de valider.
+
+La première personne du réseau qui ouvre le site fait cette configuration : la faire juste après
+l'installation. Mot de passe et dossier se changent ensuite dans *Mon compte* et *Administration*.
 
 ## Ajouter des modèles
 
-Les modèles se rangent dans `modeles/<catégorie>/` (dossier configurable via `MODELS_DIR`) :
+Le dossier des modèles se choisit dans l'assistant ou dans *Administration*. L'explorateur donne
+accès, en lecture seule, à `/media` (disques USB, même branchés après le démarrage), `/mnt`
+(NAS, disques montés à la main), `/home` et au dossier `modeles` du projet. Il s'organise ainsi :
 
 ```
 modeles/
@@ -71,7 +78,10 @@ modeles/
   (1 = modérateur par défaut). Pour la rendre publique, passer son niveau à 0 dans
   *Administration*.
 - La vignette d'un modèle est la première image trouvée dans son dossier ou son archive.
-- Le dossier est monté **en lecture seule** : le catalogue ne modifie jamais les modèles.
+- Ces emplacements sont montés **en lecture seule** : le catalogue ne modifie jamais les modèles.
+  Changer de dossier retire du catalogue les modèles absents du nouveau dossier.
+- Un dossier ailleurs sur la machine : soit l'indiquer dans `MODELS_DIR` (fichier `.env`), soit
+  ajouter un montage dans `docker-compose.yml`.
 - Seuls les exemples `modeles/thingiverse/` sont versionnés, le reste du dossier est ignoré par
   git.
 

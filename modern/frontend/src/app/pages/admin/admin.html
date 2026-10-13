@@ -7,6 +7,30 @@
     </div>
   }
 
+  <!-- Dossier des modèles -->
+  <mat-card class="admin-card library-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="card-av">folder_special</mat-icon>
+      <mat-card-title>Dossier des modèles</mat-card-title>
+      <mat-card-subtitle>{{ library()?.current?.display ?? '…' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (pickingFolder()) {
+        <p class="scan-line warn-line">
+          <mat-icon>info</mat-icon> Les modèles absents du nouveau dossier seront retirés du catalogue.
+        </p>
+        <app-folder-picker [busy]="savingFolder()" (chosen)="changeFolder($event)">
+          <button mat-button type="button" (click)="pickingFolder.set(false)">Annuler</button>
+        </app-folder-picker>
+      }
+    </mat-card-content>
+    @if (!pickingFolder()) {
+      <mat-card-actions align="end">
+        <button mat-stroked-button (click)="pickingFolder.set(true)"><mat-icon>drive_file_move</mat-icon> Changer</button>
+      </mat-card-actions>
+    }
+  </mat-card>
+
   <!-- Scan -->
   <mat-card class="admin-card">
     <mat-card-header>

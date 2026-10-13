@@ -97,3 +97,11 @@ mat-card-subtitle { color: rgba(255,255,255,0.65) !important; }
   margin-right: 0.4rem;
   vertical-align: middle;
 }
+
+.library-card {
+  --mat-button-text-label-text-color: rgba(255, 255, 255, 0.85);
+}
+
+.warn-line {
+  opacity: 0.85;
+}

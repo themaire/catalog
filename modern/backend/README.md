@@ -28,6 +28,9 @@ node -e "const b=require('bcryptjs'); b.hash('mon-mot-de-passe', 12).then(consol
 - `GET /api/models/:id/thumbnail/:file`
 - `GET|POST|PUT|DELETE /api/admin/categories` (admin)
 - `GET|PUT /api/admin/domain` (admin)
+- `GET /api/admin/library` (admin) — dossier des modèles actuel + emplacements explorables
+- `GET /api/admin/library/browse?path=` (admin) — sous-dossiers + aperçu (catégories / modèles détectés)
+- `PUT /api/admin/library` (admin) — `{ path }` : change le dossier des modèles et rescanne
 - `GET /api/admin/scan` (admin) — état du dernier scan
 - `POST /api/admin/scan` (admin) — lance un scan immédiat du dossier `models/`
 

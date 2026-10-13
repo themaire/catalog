@@ -1,0 +1,68 @@
+@if (library(); as lib) {
+  <mat-chip-listbox class="roots" aria-label="Emplacement">
+    @for (root of lib.roots; track root.path) {
+      <mat-chip-option [selected]="isActiveRoot(root.path)" (click)="open(root.path)">{{ root.label }}</mat-chip-option>
+    }
+  </mat-chip-listbox>
+}
+
+@if (listing(); as l) {
+  <div class="location">
+    <button mat-icon-button type="button" [disabled]="!l.parent || loading()" (click)="open(l.parent!)" aria-label="Dossier parent">
+      <mat-icon>arrow_upward</mat-icon>
+    </button>
+    <mat-icon class="folder-open">folder_open</mat-icon>
+    <span class="location-path" [attr.title]="l.display">{{ l.display }}</span>
+    @if (loading()) {
+      <mat-spinner diameter="18"></mat-spinner>
+    }
+  </div>
+
+  <div class="dirs">
+    @for (dir of l.dirs; track dir.path) {
+      <button type="button" class="dir" (click)="open(dir.path)" [disabled]="loading()">
+        <mat-icon>folder</mat-icon>
+        <span>{{ dir.name }}</span>
+        <mat-icon class="chevron">chevron_right</mat-icon>
+      </button>
+    } @empty {
+      <p class="empty">Aucun sous-dossier</p>
+    }
+  </div>
+
+  @if (l.preview.models) {
+    <div class="preview ok">
+      <mat-icon>check_circle</mat-icon>
+      <div>
+        <strong>{{ l.preview.models }} modèle(s)</strong> dans {{ l.preview.categories.length }} catégorie(s) :
+        @for (c of l.preview.categories; track c.name; let last = $last) {
+          {{ c.name }} ({{ c.models }}){{ last ? '' : ', ' }}
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="preview">
+      <mat-icon>info</mat-icon>
+      <div>
+        Aucun modèle détecté ici. Le dossier attendu contient un sous-dossier par catégorie, puis un
+        dossier ou une archive (zip, rar, 7z) par modèle : <code>&lt;catégorie&gt;/&lt;modèle&gt;</code>.
+      </div>
+    </div>
+  }
+}
+
+@if (error()) {
+  <div class="preview error"><mat-icon>warning</mat-icon> <div>{{ error() }}</div></div>
+}
+
+<div class="actions">
+  <ng-content></ng-content>
+  <button mat-raised-button color="primary" type="button" [disabled]="!listing() || loading() || busy()" (click)="confirm()">
+    @if (busy()) {
+      <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+    } @else {
+      <mat-icon>check</mat-icon>
+    }
+    {{ busy() ? 'Import en cours…' : confirmLabel() }}
+  </button>
+</div>

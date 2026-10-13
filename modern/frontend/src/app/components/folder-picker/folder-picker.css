@@ -1,0 +1,125 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.roots {
+  --mat-chip-label-text-color: rgba(255, 255, 255, 0.85);
+  --mat-chip-outline-color: rgba(255, 255, 255, 0.35);
+  --mat-chip-selected-container-color: var(--stl-accent);
+  --mat-chip-selected-label-text-color: var(--stl-text-on-accent);
+  --mat-chip-with-icon-selected-icon-color: var(--stl-text-on-accent);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  --mat-icon-button-icon-color: rgba(255, 255, 255, 0.85);
+  --mat-icon-button-disabled-icon-color: rgba(255, 255, 255, 0.25);
+}
+
+.folder-open {
+  color: var(--stl-accent);
+}
+
+.location-path {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+.dirs {
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: 8px;
+  background: var(--stl-primary-dark);
+}
+
+.dir {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dir:hover:not(:disabled) {
+  background: rgba(242, 214, 162, 0.12);
+}
+
+.dir mat-icon {
+  color: var(--stl-lavender);
+}
+
+.dir span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dir .chevron {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.empty {
+  margin: 0;
+  padding: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.preview {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.preview.ok {
+  background: rgba(60, 180, 90, 0.2);
+}
+
+.preview.ok mat-icon {
+  color: #8fe0a3;
+}
+
+.preview.error {
+  background: rgba(220, 50, 50, 0.25);
+  color: #ffbcbc;
+}
+
+.preview code {
+  color: var(--stl-accent);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-spinner {
+  display: inline-block;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}

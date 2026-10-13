@@ -9,7 +9,11 @@ const {
   getDomain,
   updateDomain
 } = require('../services/catalog');
-const { runScan, getScanStatus } = require('../services/scan');
+const fs = require('fs');
+const path = require('path');
+const { runScan, getScanStatus, discoverModels } = require('../services/scan');
+const { getModelsRoot, getBrowseRoots, resolveBrowsable, displayPath, setModelsRoot } = require('../services/settings');
+const { isIgnoredName } = require('../utils/archive');
 
 const router = express.Router();
 const categorySchema = z.object({ name: z.string().min(1).max(100), rightLevel: z.number().int().min(0).max(2) });
@@ -93,6 +97,77 @@ router.get('/scan', (_req, res) => {
 router.post('/scan', async (_req, res, next) => {
   try {
     res.json(await runScan());
+  } catch (err) {
+    next(err);
+  }
+});
+
+// --- Dossier des modèles (assistant de premier lancement + administration) ---
+
+function libraryInfo() {
+  const current = getModelsRoot();
+  return {
+    current: { path: current, display: displayPath(current) },
+    roots: getBrowseRoots().map((r) => ({ label: r.label, path: r.path, display: r.hostLabel }))
+  };
+}
+
+router.get('/library', (_req, res) => {
+  res.json(libraryInfo());
+});
+
+// Sous-dossiers d'un dossier + aperçu de ce que le scan y trouverait (catégories / modèles).
+router.get('/library/browse', async (req, res, next) => {
+  const target = resolveBrowsable(String(req.query.path ?? ''));
+  if (!target) return res.status(400).json({ error: 'Dossier non autorisé' });
+
+  try {
+    const entries = await fs.promises.readdir(target.path, { withFileTypes: true });
+    const dirs = entries
+      .filter((e) => e.isDirectory() && !isIgnoredName(e.name))
+      .map((e) => ({ name: e.name, path: path.join(target.path, e.name) }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const models = await discoverModels(target.path).catch(() => []);
+    const byCategory = new Map();
+    for (const m of models) byCategory.set(m.category, (byCategory.get(m.category) ?? 0) + 1);
+
+    const rootReal = fs.realpathSync(target.root.path);
+    res.json({
+      path: target.path,
+      display: displayPath(target.path),
+      parent: target.path === rootReal ? null : path.dirname(target.path),
+      dirs,
+      preview: {
+        models: models.length,
+        categories: [...byCategory].map(([name, count]) => ({ name, models: count }))
+      }
+    });
+  } catch (err) {
+    if (err.code === 'EACCES') return res.status(403).json({ error: 'Accès refusé à ce dossier (droits Unix)' });
+    next(err);
+  }
+});
+
+const librarySchema = z.object({ path: z.string().min(1) });
+
+// Change le dossier des modèles puis rescanne. Les modèles absents du nouveau dossier sont retirés du catalogue.
+router.put('/library', async (req, res, next) => {
+  const parsed = librarySchema.safeParse(req.body);
+  const target = parsed.success ? resolveBrowsable(parsed.data.path) : null;
+  if (!target || !fs.statSync(target.path).isDirectory()) return res.status(400).json({ error: 'Dossier non autorisé' });
+
+  try {
+    await setModelsRoot(target.path);
+    // Un scan déjà en cours porte sur l'ancien dossier : on l'attend, puis on rescanne.
+    await runScan().catch(() => {});
+    let scan;
+    try {
+      scan = await runScan();
+    } catch (err) {
+      scan = { error: err.message };
+    }
+    res.json({ ...libraryInfo(), scan });
   } catch (err) {
     next(err);
   }

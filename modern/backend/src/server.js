@@ -3,6 +3,7 @@ const cron = require('node-cron');
 const app = require('./app');
 const { port, scan } = require('./config');
 const { runScan } = require('./services/scan');
+const { initSettings } = require('./services/settings');
 
 function scheduledScan(trigger) {
   runScan()
@@ -19,9 +20,17 @@ function scheduledScan(trigger) {
     .catch((err) => console.error(`[scan:${trigger}]`, err.message));
 }
 
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Catalog API listening on http://localhost:${port}`);
-  if (scan.onStartup) scheduledScan('startup');
-  if (scan.cron) cron.schedule(scan.cron, () => scheduledScan('cron'));
-});
+initSettings()
+  .then(() => {
+    app.listen(port, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Catalog API listening on http://localhost:${port}`);
+      if (scan.onStartup) scheduledScan('startup');
+      if (scan.cron) cron.schedule(scan.cron, () => scheduledScan('cron'));
+    });
+  })
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('[startup] initialisation des réglages impossible :', err.message);
+    process.exit(1);
+  });

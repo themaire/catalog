@@ -2,7 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { AuthService } from './auth';
-import { Category, ModelDetail, ModelFile, ModelSummary, ScanResult, ScanStatus } from '../models';
+import {
+  BrowseResult,
+  Category,
+  LibraryInfo,
+  LibraryUpdate,
+  ModelDetail,
+  ModelFile,
+  ModelSummary,
+  ScanResult,
+  ScanStatus
+} from '../models';
 
 function saveBlob(blob: Blob, fileName: string): void {
   const objectUrl = URL.createObjectURL(blob);
@@ -95,6 +105,22 @@ export class ApiService {
   /** Lance un scan du dossier des modèles et attend son résultat. */
   rescan(): Observable<ScanResult> {
     return this.http.post<ScanResult>(`${this.baseUrl}/admin/scan`, {}, { headers: this.authHeaders() });
+  }
+
+  library(): Observable<LibraryInfo> {
+    return this.http.get<LibraryInfo>(`${this.baseUrl}/admin/library`, { headers: this.authHeaders() });
+  }
+
+  browse(path: string): Observable<BrowseResult> {
+    return this.http.get<BrowseResult>(`${this.baseUrl}/admin/library/browse`, {
+      params: { path },
+      headers: this.authHeaders()
+    });
+  }
+
+  /** Change le dossier des modèles ; le backend rescanne et renvoie le résultat. */
+  setLibrary(path: string): Observable<LibraryUpdate> {
+    return this.http.put<LibraryUpdate>(`${this.baseUrl}/admin/library`, { path }, { headers: this.authHeaders() });
   }
 
   adminCategories(): Observable<Category[]> {

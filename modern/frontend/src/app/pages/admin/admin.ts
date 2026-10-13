@@ -9,7 +9,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DatePipe } from '@angular/common';
 import { ApiService } from '../../services/api';
-import { Category, ScanStatus } from '../../models';
+import { Category, LibraryInfo, ScanStatus } from '../../models';
+import { FolderPicker } from '../../components/folder-picker/folder-picker';
 
 @Component({
   selector: 'app-admin',
@@ -22,7 +23,8 @@ import { Category, ScanStatus } from '../../models';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FolderPicker
   ],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
@@ -34,6 +36,9 @@ export class Admin implements OnInit {
 
   scan = signal<ScanStatus | null>(null);
   scanning = signal(false);
+  library = signal<LibraryInfo | null>(null);
+  pickingFolder = signal(false);
+  savingFolder = signal(false);
 
   newCategoryName = '';
   newCategoryLevel = 1;
@@ -50,6 +55,7 @@ export class Admin implements OnInit {
       next: (categories) => this.categories.set(categories),
       error: () => this.error.set('Impossible de charger les catégories admin')
     });
+    this.api.library().subscribe({ next: (lib) => this.library.set(lib) });
     this.api.scanStatus().subscribe({
       next: (status) => {
         this.scan.set(status);
@@ -70,6 +76,21 @@ export class Admin implements OnInit {
         this.scanning.set(false);
         this.error.set(`Échec du scan : ${err?.error?.error ?? 'erreur inconnue'}`);
         this.reload();
+      }
+    });
+  }
+
+  changeFolder(path: string): void {
+    this.savingFolder.set(true);
+    this.api.setLibrary(path).subscribe({
+      next: () => {
+        this.savingFolder.set(false);
+        this.pickingFolder.set(false);
+        this.reload();
+      },
+      error: (err) => {
+        this.savingFolder.set(false);
+        this.error.set(err?.error?.error ?? 'Impossible de changer de dossier');
       }
     });
   }

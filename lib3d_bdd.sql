@@ -257,3 +257,18 @@ INSERT INTO users (username, password_hash, role)
 VALUES ('admin', '', 2);
 
 COMMIT;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `settings`
+--
+-- Réglages modifiables depuis l'application (ex. models_root : dossier des modèles choisi dans
+-- l'assistant de premier lancement). Le backend la crée aussi s'il ne la trouve pas (bases existantes).
+--
+
+CREATE TABLE IF NOT EXISTS `settings` (
+  `name`  VARCHAR(100) NOT NULL,
+  `value` TEXT NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
