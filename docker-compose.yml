@@ -22,5 +22,32 @@ services:
       retries: 5
       start_period: 30s
 
+  backend:
+    build: ./modern/backend
+    container_name: catalog-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manquant dans .env}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-lib3d}
+      DB_USER: ${DB_USER:-catalog}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SCAN_CRON: ${SCAN_CRON:-*/10 * * * *}
+      SCAN_NEW_CATEGORY_LEVEL: ${SCAN_NEW_CATEGORY_LEVEL:-1}
+      TZ: Europe/Paris
+    volumes:
+      # Lecture seule : le backend ne modifie jamais les modèles, il extrait dans le cache.
+      - ${MODELS_DIR:-./catalog/models}:/data/models:ro
+      - extract-cache:/cache
+    # Temporaire (avant le frontend Nginx du Lot 4). Pas 3000 : déjà pris par Grafana sur piserve.
+    ports:
+      - "127.0.0.1:${BACKEND_HOST_PORT:-3080}:3000"
+
 volumes:
   db-data:
+  extract-cache:

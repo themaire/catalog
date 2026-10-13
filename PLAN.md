@@ -78,24 +78,41 @@ Décisions actées :
 - [x] Volume nommé `db-data` pour la persistance.
 
 ### Lot 2 — Backend : reprise de l'existant + scan
-- [ ] Reprendre `modern/backend` tel quel (auth JWT, CRUD catégories déjà écrits),
+- [x] Reprendre `modern/backend` tel quel (auth JWT, CRUD catégories déjà écrits),
       l'intégrer dans un `Dockerfile` (node:20-alpine ou node:20-bookworm-slim —
       bookworm pour compat `arm64` Pi5 + binaires natifs d'archives).
-- [ ] Installer les outils d'extraction d'archives dans l'image : `unzip`, `unrar`
+- [x] Installer les outils d'extraction d'archives dans l'image : `unzip`, `unrar`
       (ou `unrar-free`/`p7zip-full`), `7zip` — en shellant comme le faisait le PHP
       (`exec unrar e ...`), pattern déjà prouvé viable, pas besoin de réinventer
       avec des libs JS fragiles pour RAR/7z.
-- [ ] Module `scan.ts` : porter la logique de `2bdd.php` + `func_fichiers.php` :
+- [x] Module `scan.ts` : porter la logique de `2bdd.php` + `func_fichiers.php` :
       - parcours récursif de `models/<domain>/<nom_modèle>/...`
       - détection fichier simple vs archive (zip/rar/7z)
       - pour une archive : lister son contenu sans extraction complète
       - upsert en base (`stl`, `fichiers`), nettoyage des entrées orphelines
         (dossiers supprimés) comme le faisait `delBdd()`.
-- [ ] `node-cron` dans `server.js`/`app.js` : équivalent du cron `*/10 ...` existant.
-- [ ] Endpoint `GET /api/models/:id/files/:fileId/extract` : extrait (ou lit le
+- [x] `node-cron` dans `server.js`/`app.js` : équivalent du cron `*/10 ...` existant.
+- [x] Endpoint `GET /api/models/:id/files/:fileId/extract` : extrait (ou lit le
       cache) le fichier demandé depuis l'archive, le stream en réponse.
-- [ ] Endpoint thumbnail déjà présent (`stl_thumbnail`) à relier à la première
+- [x] Endpoint thumbnail déjà présent (`stl_thumbnail`) à relier à la première
       image trouvée dans l'archive au moment du scan (logique `getStArchName`).
+
+Réalisé (notes) :
+- Image `node:24-trixie-slim` (Node 20 est EOL depuis avril 2026) ; `7zip` + `7zip-rar`
+  (non-free) : un seul binaire `7z` pour zip/rar/7z. Le support RAR n'a pas pu être
+  testé faute d'archive RAR de test (pas d'outil libre pour en créer).
+- Code resté en JavaScript (CommonJS) comme le reste du backend : `services/scan.js`
+  au lieu de `scan.ts`.
+- Scan : resynchronise à chaque passage (ajouts/suppressions de fichiers et de modèles),
+  crée les catégories inconnues (`SCAN_NEW_CATEGORY_LEVEL`), refuse de tourner si
+  `models/` est vide. Déclenchable à la main : `POST /api/admin/scan`.
+- Vignette = première image du modèle (dossier ou archive), copiée/extraite dans le cache.
+- `download` : zip du dossier à la volée (en cache) pour les modèles-dossiers, et
+  contrôle d'accès par catégorie (comme `extract`). **Conséquence pour le Lot 3** : le
+  lien de téléchargement du frontend (simple `<a href>` sans token) renvoie 404 pour
+  les catégories non publiques → passer par HttpClient (blob) avec le token.
+- Backend exposé temporairement sur `127.0.0.1:3080` (3000 = Grafana sur piserve).
+- `getModel` renvoie maintenant `id` et `url` (endpoint extract) pour chaque fichier.
 
 ### Lot 3 — Frontend : viewer 3D
 - [ ] Ajouter `three` au frontend Angular (`npm install three`).

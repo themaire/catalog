@@ -8,11 +8,19 @@ const {
   listCategories,
   listModelsByCategory,
   getModel,
-  incrementDownloads,
-  getModelDownloadPath
+  incrementDownloads
 } = require('../services/catalog');
+const { getModelFile, getModelDownload } = require('../services/files');
 
 const router = express.Router();
+
+// Le viewer 3D charge plusieurs fichiers par fiche : limite plus large que pour les téléchargements.
+const extractLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 120,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false
+});
 
 const downloadLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -64,11 +72,30 @@ router.get('/models/:id/download', downloadLimiter, async (req, res, next) => {
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Invalid model id' });
 
   try {
-    const file = await getModelDownloadPath(id);
+    const file = await getModelDownload(id, getRole(req));
     if (!file) return res.status(404).json({ error: 'Download file not found' });
 
     await incrementDownloads(id);
     res.download(file.absolute, file.fileName);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Un fichier précis d'un modèle (extrait de l'archive si besoin, puis servi depuis le cache).
+router.get('/models/:id/files/:fileId/extract', extractLimiter, async (req, res, next) => {
+  const id = Number(req.params.id);
+  const fileId = Number(req.params.fileId);
+  if (!Number.isInteger(id) || id <= 0 || !Number.isInteger(fileId) || fileId <= 0) {
+    return res.status(400).json({ error: 'Invalid file request' });
+  }
+
+  try {
+    const file = await getModelFile(id, fileId, getRole(req));
+    if (!file) return res.status(404).json({ error: 'File not found' });
+    res.attachment(file.fileName);
+    res.set('Content-Disposition', res.get('Content-Disposition').replace(/^attachment/, 'inline'));
+    res.sendFile(file.absolute);
   } catch (err) {
     next(err);
   }

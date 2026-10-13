@@ -9,6 +9,7 @@ const {
   getDomain,
   updateDomain
 } = require('../services/catalog');
+const { runScan, getScanStatus } = require('../services/scan');
 
 const router = express.Router();
 const categorySchema = z.object({ name: z.string().min(1).max(100), rightLevel: z.number().int().min(0).max(2) });
@@ -79,6 +80,19 @@ router.put('/domain', async (req, res, next) => {
   try {
     await updateDomain(parsed.data.value);
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/scan', (_req, res) => {
+  res.json(getScanStatus());
+});
+
+// Déclenche un scan immédiat du dossier models/ et attend son résultat.
+router.post('/scan', async (_req, res, next) => {
+  try {
+    res.json(await runScan());
   } catch (err) {
     next(err);
   }

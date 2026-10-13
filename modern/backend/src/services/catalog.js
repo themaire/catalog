@@ -1,8 +1,4 @@
-const fs = require('fs');
-const path = require('path');
 const { query } = require('../db');
-const { modelsRoot } = require('../config');
-const { safeResolve } = require('../utils/path');
 
 async function listCategories(accessLevel = 0) {
   return query(
@@ -43,7 +39,9 @@ async function getModel(modelId, accessLevel = 0) {
   if (!rows.length) return null;
 
   const files = await query(
-    'SELECT nom, type, chemin, taille FROM fichiers_stl WHERE stl_id = ? ORDER BY taille DESC',
+    `SELECT fi.fi_id, fi.fi_nom, fi.fi_path, fi.fi_taille, lib.lib_nom AS type
+     FROM fichiers fi LEFT JOIN libelles lib ON lib.lib_id = fi.lib_id_type
+     WHERE fi.stl_id = ? ORDER BY fi.fi_taille DESC`,
     [modelId]
   );
 
@@ -57,25 +55,19 @@ async function getModel(modelId, accessLevel = 0) {
     category: rows[0].category,
     path: rows[0].stl_path,
     files: files.map((f) => ({
-      name: f.nom,
+      id: f.fi_id,
+      name: f.fi_nom,
       type: f.type,
-      path: f.chemin,
-      size: f.taille
+      // Chemin relatif au modèle (dossier ou intérieur de l'archive)
+      path: f.fi_path ? `${f.fi_path}/${f.fi_nom}` : f.fi_nom,
+      size: f.fi_taille,
+      url: `/api/models/${modelId}/files/${f.fi_id}/extract`
     }))
   };
 }
 
 async function incrementDownloads(modelId) {
   await query('UPDATE stl SET stl_nb_dl = COALESCE(stl_nb_dl, 0) + 1 WHERE stl_id = ?', [modelId]);
-}
-
-async function getModelDownloadPath(modelId) {
-  const rows = await query('SELECT stl_nom, stl_path FROM stl WHERE stl_id = ? LIMIT 1', [modelId]);
-  if (!rows.length) return null;
-  const relative = path.join(path.basename(rows[0].stl_path), rows[0].stl_nom);
-  const absolute = safeResolve(modelsRoot, relative);
-  if (!fs.existsSync(absolute)) return null;
-  return { absolute, fileName: rows[0].stl_nom };
 }
 
 async function listAdminCategories() {
@@ -121,7 +113,6 @@ module.exports = {
   listModelsByCategory,
   getModel,
   incrementDownloads,
-  getModelDownloadPath,
   listAdminCategories,
   createCategory,
   updateCategory,

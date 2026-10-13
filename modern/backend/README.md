@@ -4,7 +4,7 @@ Backend API Express pour migrer le catalogue PHP vers une architecture frontend/
 
 ## Configuration sécurité
 
-- Renseigner `MOD_PASSWORD_HASH` et/ou `ADMIN_PASSWORD_HASH` avec des hashes bcrypt.
+- Les comptes sont dans la table `users` (bcrypt). Compte par défaut : `admin` / `admin`, à changer.
 - Exemple de génération hash:
 
 ```bash
@@ -18,12 +18,27 @@ node -e "const b=require('bcryptjs'); b.hash('mon-mot-de-passe', 12).then(consol
 - `GET /api/categories`
 - `GET /api/models?category=<name>`
 - `GET /api/models/:id`
-- `GET /api/models/:id/download` (rate-limited)
+- `GET /api/models/:id/download` (rate-limited) — archive telle quelle, ou zip du dossier (mis en cache)
+- `GET /api/models/:id/files/:fileId/extract` — un fichier du modèle, extrait de l'archive à la demande (cache disque)
 - `GET /api/models/:id/thumbnail/:file`
 - `GET|POST|PUT|DELETE /api/admin/categories` (admin)
 - `GET|PUT /api/admin/domain` (admin)
+- `GET /api/admin/scan` (admin) — état du dernier scan
+- `POST /api/admin/scan` (admin) — lance un scan immédiat du dossier `models/`
 
-## Lancement local
+## Scan du dossier models
+
+`src/services/scan.js` (portage de `catalog/2bdd.php`) synchronise `models/<catégorie>/<modèle>` avec les
+tables `stl` / `fichiers` : au démarrage puis selon `SCAN_CRON` (toutes les 10 min par défaut).
+Un modèle est un dossier ou une archive zip/rar/7z (listée via `7z`, sans extraction). Les catégories
+inconnues sont créées avec le niveau `SCAN_NEW_CATEGORY_LEVEL`, les modèles disparus sont supprimés, et un
+dossier `models/` vide annule le scan (garde-fou contre un montage absent).
+
+## Lancement
+
+Via Docker (recommandé, depuis la racine du dépôt) : `docker compose up -d --build backend`.
+L'image embarque `7z` + support RAR. Hors Docker, il faut `7z` dans le PATH.
+
 
 ```bash
 cp .env.example .env
