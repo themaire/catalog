@@ -1,5 +1,6 @@
 
 .DS_Store
+._*
 
 node_modules/
 modern/**/node_modules/
@@ -7,3 +8,7 @@ lib3d_bdd_user_nelie.sql
 modern/backend/.env
 modern/frontend/package-lock.json
 .env
+
+# Bibliothèque de modèles réelle : jamais versionnée, sauf les exemples de démo
+/modeles/*
+!/modeles/thingiverse/

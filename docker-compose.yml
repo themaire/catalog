@@ -42,11 +42,23 @@ services:
       TZ: Europe/Paris
     volumes:
       # Lecture seule : le backend ne modifie jamais les modèles, il extrait dans le cache.
-      - ${MODELS_DIR:-./catalog/models}:/data/models:ro
+      - ${MODELS_DIR:-./modeles}:/data/models:ro
       - extract-cache:/cache
-    # Temporaire (avant le frontend Nginx du Lot 4). Pas 3000 : déjà pris par Grafana sur piserve.
+    # Accès direct à l'API pour debug, local uniquement (le LAN passe par le frontend).
+    # Pas 3000 : déjà pris par Grafana sur piserve.
     ports:
       - "127.0.0.1:${BACKEND_HOST_PORT:-3080}:3000"
+
+  frontend:
+    build: ./modern/frontend
+    container_name: catalog-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    # Exposé sur le LAN
+    ports:
+      - "${FRONTEND_PORT:-8090}:80"
 
 volumes:
   db-data:

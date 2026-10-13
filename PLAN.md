@@ -62,7 +62,9 @@ Décisions actées :
       archives réelles existent déjà sur une install précédente — sinon dossier vide
       avec les deux exemples déjà versionnés (`models/thingiverse/...`).
       → Aucune install précédente accessible sur piserve (`/home/pi` non lisible,
-        pas de `/var/www/html`) : on part des exemples dans `catalog/models/`.
+        pas de `/var/www/html`) : on part des exemples, déplacés dans `./modeles/`
+        (bind mount en lecture seule sur le backend ; le reste de `./modeles` est
+        ignoré par git).
 - [x] Vérifier qu'aucun `.env` ni secret n'est poussé par erreur (`.gitignore`).
 
 ### Lot 1 — Dockerisation de la base
@@ -142,7 +144,7 @@ Réalisé (notes) :
   fichier, téléchargement.
 
 ### Lot 4 — Docker compose complet + déploiement piserve
-- [ ] Service `frontend` : build Angular multi-stage → Nginx, `proxy_pass /api`
+- [x] Service `frontend` : build Angular multi-stage → Nginx, `proxy_pass /api`
       vers `backend:3000`.
 - [ ] `docker-compose.yml` final : réseaux, dépendances (`depends_on` + healthcheck
       DB), `.env` pour les secrets (JWT_SECRET, DB password, etc.), `.env.example`
