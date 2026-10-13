@@ -1,0 +1,26 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: catalog-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD manquant dans .env}
+      MARIADB_DATABASE: ${DB_NAME:-lib3d}
+      MARIADB_USER: ${DB_USER:-catalog}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant dans .env}
+      TZ: Europe/Paris
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./lib3d_bdd.sql:/docker-entrypoint-initdb.d/01-lib3d_bdd.sql:ro
+    # Exposé uniquement en local sur l'hôte (debug / client mysql) ; le backend passera par le réseau compose.
+    ports:
+      - "127.0.0.1:${DB_HOST_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db-data:

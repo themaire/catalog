@@ -164,7 +164,6 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Index pour la table `libelles`
 --
 ALTER TABLE `libelles`
-  ADD PRIMARY KEY (`lib_id`),
   ADD UNIQUE KEY `lib_id` (`lib_id`);
 
 --
@@ -238,4 +237,6 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Comptes utilisateurs. role: 1=moderateur, 2=admin';
 
 INSERT INTO users (username, password_hash, role)
-VALUES ('admin', '$2b$10$Ot7qfQANVERfbpRLM7aEl.cf31hho4q/kHwx.UpirPN.jkI4WB3Dq', 2);
+VALUES ('admin', '$2b$10$ch7S0KIctRrgk6eNkrtY1./5fVFM3dzCYAKydGDoyEenFN7iwPoo.', 2); -- mot de passe par défaut : admin (à changer)
+
+COMMIT;

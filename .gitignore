@@ -6,3 +6,4 @@ modern/**/node_modules/
 lib3d_bdd_user_nelie.sql
 modern/backend/.env
 modern/frontend/package-lock.json
+.env

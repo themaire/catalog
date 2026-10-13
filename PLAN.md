@@ -57,19 +57,25 @@ Décisions actées :
 ## Découpage en tâches
 
 ### Lot 0 — Mise en place du dépôt sur piserve
-- [ ] Sur piserve : `mkdir -p ~/Documents/github && cd ~/Documents/github && git clone <repo> catalog`
-- [ ] Copier `/home/pi/models` (ou équivalent existant) vers `catalog/models` si des
+- [x] Sur piserve : `mkdir -p ~/Documents/github && cd ~/Documents/github && git clone <repo> catalog`
+- [x] Copier `/home/pi/models` (ou équivalent existant) vers `catalog/models` si des
       archives réelles existent déjà sur une install précédente — sinon dossier vide
       avec les deux exemples déjà versionnés (`models/thingiverse/...`).
-- [ ] Vérifier qu'aucun `.env` ni secret n'est poussé par erreur (`.gitignore`).
+      → Aucune install précédente accessible sur piserve (`/home/pi` non lisible,
+        pas de `/var/www/html`) : on part des exemples dans `catalog/models/`.
+- [x] Vérifier qu'aucun `.env` ni secret n'est poussé par erreur (`.gitignore`).
 
 ### Lot 1 — Dockerisation de la base
-- [ ] `docker-compose.yml` : service `db` (image `mariadb:10.11`), variables d'env
+- [x] `docker-compose.yml` : service `db` (image `mariadb:10.11`), variables d'env
       pour root password / user applicatif, montage de `lib3d_bdd.sql` dans
       `/docker-entrypoint-initdb.d/` pour l'init automatique au premier démarrage.
-- [ ] Ajouter la table `users` (déjà présente dans le dump) + vérifier le hash
+- [x] Ajouter la table `users` (déjà présente dans le dump) + vérifier le hash
       admin par défaut — **à changer après premier démarrage**.
-- [ ] Volume nommé `db-data` pour la persistance.
+      → Corrigé dans le dump : `PRIMARY KEY` en double sur `libelles` (faisait échouer
+        l'init) et `INSERT` admin jamais commité (`AUTOCOMMIT=0` + insert après le
+        `COMMIT`). Compte `admin` (role 2, bcrypt) bien créé, mot de passe par défaut `admin` →
+        à changer (Lot 5).
+- [x] Volume nommé `db-data` pour la persistance.
 
 ### Lot 2 — Backend : reprise de l'existant + scan
 - [ ] Reprendre `modern/backend` tel quel (auth JWT, CRUD catégories déjà écrits),
