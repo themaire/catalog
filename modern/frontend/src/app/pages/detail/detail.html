@@ -14,11 +14,32 @@
     </div>
 
     @if (selected(); as sel) {
-      <mat-card class="viewer-card">
-        <div class="viewer-area"><app-viewer3d [files]="viewerFiles()" /></div>
-        @if (viewable().length > 1) {
+      <mat-card #previewCard class="viewer-card">
+        <div class="preview-header">
+          <mat-icon class="preview-icon">{{ icon(sel) }}</mat-icon>
+          <span class="preview-name" [attr.title]="sel.path">{{ sel.path }}</span>
+          <button mat-icon-button (click)="downloadFile(sel)" matTooltip="Télécharger ce fichier">
+            <mat-icon>download</mat-icon>
+          </button>
+        </div>
+        <div class="viewer-area">
+          @switch (selectedKind()) {
+            @case ('3d') { <app-viewer3d [files]="viewerFiles()" /> }
+            @case ('image') { <app-image-viewer [file]="sel" /> }
+            @case ('text') { <app-text-viewer [file]="sel" /> }
+            @case ('pdf') { <app-pdf-viewer [file]="sel" /> }
+            @default {
+              <div class="no-preview">
+                <mat-icon>visibility_off</mat-icon>
+                <p>Pas d'aperçu pour les fichiers .{{ sel.type }}</p>
+                <button mat-stroked-button (click)="downloadFile(sel)"><mat-icon>download</mat-icon> Télécharger</button>
+              </div>
+            }
+          }
+        </div>
+        @if (models3d().length > 1) {
           <mat-chip-listbox class="viewer-choices" aria-label="Fichier 3D affiché">
-            @for (file of viewable(); track file.id) {
+            @for (file of models3d(); track file.id) {
               <mat-chip-option [selected]="file.id === sel.id" (click)="select(file)">
                 {{ file.name }}
               </mat-chip-option>
@@ -68,12 +89,11 @@
               @for (file of m.files; track file.id) {
                 <div
                   class="file-row"
-                  [class.viewable]="isViewable(file)"
                   [class.active]="file.id === selected()?.id"
                   [attr.title]="file.path"
                   (click)="select(file)"
                 >
-                  <mat-icon class="file-icon">{{ isViewable(file) ? 'view_in_ar' : 'insert_drive_file' }}</mat-icon>
+                  <mat-icon class="file-icon">{{ icon(file) }}</mat-icon>
                   <span class="file-name">{{ file.name }}</span>
                   <span class="file-type mat-badge">{{ file.type }}</span>
                   <span class="file-size">{{ (file.size / 1024 | number:'1.0-0') }} Ko</span>

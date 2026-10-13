@@ -6,12 +6,24 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DatePipe } from '@angular/common';
 import { ApiService } from '../../services/api';
-import { Category } from '../../models';
+import { Category, ScanStatus } from '../../models';
 
 @Component({
   selector: 'app-admin',
-  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [
+    FormsModule,
+    DatePipe,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
@@ -19,6 +31,9 @@ export class Admin implements OnInit {
   categories = signal<Category[]>([]);
   domain = '';
   error = signal<string | null>(null);
+
+  scan = signal<ScanStatus | null>(null);
+  scanning = signal(false);
 
   newCategoryName = '';
   newCategoryLevel = 1;
@@ -35,9 +50,27 @@ export class Admin implements OnInit {
       next: (categories) => this.categories.set(categories),
       error: () => this.error.set('Impossible de charger les catégories admin')
     });
+    this.api.scanStatus().subscribe({
+      next: (status) => {
+        this.scan.set(status);
+        this.scanning.set(status.running);
+      }
+    });
     this.api.domain().subscribe({
       next: (domain) => this.domain = domain.value,
       error: () => this.error.set('Impossible de charger le domaine')
+    });
+  }
+
+  rescan(): void {
+    this.scanning.set(true);
+    this.api.rescan().subscribe({
+      next: () => this.reload(),
+      error: (err) => {
+        this.scanning.set(false);
+        this.error.set(`Échec du scan : ${err?.error?.error ?? 'erreur inconnue'}`);
+        this.reload();
+      }
     });
   }
 

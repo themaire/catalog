@@ -75,3 +75,25 @@ mat-card-subtitle { color: rgba(255,255,255,0.65) !important; }
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+.scan-line {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.scan-error {
+  color: #b3261e;
+}
+
+.scan-date {
+  opacity: 0.7;
+  font-size: 0.8rem;
+}
+
+.btn-spinner {
+  display: inline-block;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}

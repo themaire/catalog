@@ -1,0 +1,81 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.frame {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  /* Damier : rend visibles les zones transparentes des PNG/GIF */
+  background:
+    repeating-conic-gradient(#3b4161 0% 25%, #343a56 0% 50%) 0 0 / 20px 20px;
+}
+
+.frame.dragging {
+  cursor: grabbing;
+}
+
+img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  transform-origin: 0 0;
+}
+
+img.pixelated {
+  image-rendering: pixelated;
+}
+
+img.hidden {
+  visibility: hidden;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+.overlay.error {
+  color: #ffb4a9;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding-top: 0.4rem;
+  color: rgba(255, 255, 255, 0.85);
+  --mat-icon-button-icon-color: rgba(255, 255, 255, 0.85);
+  --mat-button-text-label-text-color: rgba(255, 255, 255, 0.85);
+}
+
+.toolbar .active {
+  --mat-button-text-label-text-color: var(--stl-accent);
+}
+
+.zoom {
+  min-width: 3.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.dims {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+}

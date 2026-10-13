@@ -16,11 +16,6 @@ import type { EmbeddedViewer } from 'online-3d-viewer';
 import { ApiService } from '../../services/api';
 import { ModelFile } from '../../models';
 
-/** Extensions affichables par online-3d-viewer (fichier principal). */
-export const VIEWABLE_TYPES = new Set([
-  'stl', 'obj', '3mf', 'step', 'stp', 'iges', 'igs', 'ply', 'amf', 'off', 'glb', 'gltf', 'fbx', '3ds', 'dae'
-]);
-
 /**
  * Viewer 3D basé sur Online 3D Viewer (three.js). Les fichiers sont récupérés via l'API
  * (avec le token) puis passés au viewer sous forme de File : pas d'URL publique nécessaire.

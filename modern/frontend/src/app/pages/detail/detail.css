@@ -34,6 +34,8 @@
 }
 
 .viewer-card {
+  /* Laisse la place à la barre de navigation fixe lors du scrollIntoView */
+  scroll-margin-top: 80px;
   background: var(--stl-primary) !important;
   padding: 0.75rem;
   margin-bottom: 1.2rem;
@@ -41,6 +43,39 @@
 
 .viewer-area {
   height: min(60vh, 520px);
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.85);
+  --mat-icon-button-icon-color: rgba(255, 255, 255, 0.85);
+}
+
+.preview-icon {
+  color: var(--stl-accent);
+}
+
+.preview-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.no-preview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--stl-primary-dark);
+  color: rgba(255, 255, 255, 0.7);
+  --mat-button-outlined-label-text-color: var(--stl-accent);
 }
 
 .viewer-choices {
@@ -61,6 +96,8 @@
 
 @media (max-width: 700px) {
   .viewer-card {
+  /* Laisse la place à la barre de navigation fixe lors du scrollIntoView */
+  scroll-margin-top: 80px;
   background: var(--stl-primary) !important;
   padding: 0.75rem;
   margin-bottom: 1.2rem;
@@ -68,6 +105,39 @@
 
 .viewer-area {
   height: min(60vh, 520px);
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.85);
+  --mat-icon-button-icon-color: rgba(255, 255, 255, 0.85);
+}
+
+.preview-icon {
+  color: var(--stl-accent);
+}
+
+.preview-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.no-preview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--stl-primary-dark);
+  color: rgba(255, 255, 255, 0.7);
+  --mat-button-outlined-label-text-color: var(--stl-accent);
 }
 
 .viewer-choices {
@@ -136,11 +206,11 @@ dd {
   font-size: 0.85rem;
 }
 
-.file-row.viewable {
+.file-row {
   cursor: pointer;
 }
 
-.file-row.viewable:hover,
+.file-row:hover,
 .file-row.active {
   background: rgba(242, 214, 162, 0.12);
 }

@@ -7,6 +7,45 @@
     </div>
   }
 
+  <!-- Scan -->
+  <mat-card class="admin-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="card-av">sync</mat-icon>
+      <mat-card-title>Scan des modèles</mat-card-title>
+      <mat-card-subtitle>Automatique toutes les 10 min, ou à la demande</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (scan()?.lastResult; as r) {
+        @if (r.error) {
+          <p class="scan-line scan-error"><mat-icon>warning</mat-icon> {{ r.error }}</p>
+        } @else {
+          <p class="scan-line">
+            {{ r.models }} modèles · +{{ r.modelsAdded }} / −{{ r.modelsRemoved }} modèles ·
+            +{{ r.filesAdded }} / −{{ r.filesRemoved }} fichiers
+            @if (r.categoriesCreated) { · {{ r.categoriesCreated }} catégorie(s) créée(s) }
+            · {{ r.durationMs }} ms
+          </p>
+          @for (e of r.errors; track e) {
+            <p class="scan-line scan-error"><mat-icon>warning</mat-icon> {{ e }}</p>
+          }
+        }
+        <p class="scan-line scan-date">Dernier scan : {{ r.finishedAt | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+      } @else {
+        <p class="scan-line scan-date">Aucun scan depuis le démarrage du backend.</p>
+      }
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" [disabled]="scanning()" (click)="rescan()">
+        @if (scanning()) {
+          <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+        } @else {
+          <mat-icon>sync</mat-icon>
+        }
+        {{ scanning() ? 'Scan en cours…' : 'Rescanner' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
   <!-- Domain -->
   <mat-card class="admin-card">
     <mat-card-header>
@@ -56,6 +95,7 @@
     <mat-card-header>
       <mat-icon mat-card-avatar class="card-av">category</mat-icon>
       <mat-card-title>Catégories ({{ categories().length }})</mat-card-title>
+      <mat-card-subtitle>Niveau : 0 = public · 1 = modérateur · 2 = admin</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <div class="categories-list">

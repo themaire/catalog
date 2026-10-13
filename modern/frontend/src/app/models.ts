@@ -35,3 +35,21 @@ export interface ModelDetail {
   path: string;
   files: ModelFile[];
 }
+
+export interface ScanResult {
+  models: number;
+  modelsAdded: number;
+  modelsRemoved: number;
+  filesAdded: number;
+  filesRemoved: number;
+  categoriesCreated: number;
+  errors: string[];
+  durationMs: number;
+  finishedAt: string;
+}
+
+export interface ScanStatus {
+  running: boolean;
+  /** En cas d'échec, seuls `error` et `finishedAt` sont renseignés. */
+  lastResult: (ScanResult & { error?: string }) | null;
+}

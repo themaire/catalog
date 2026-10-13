@@ -1,0 +1,42 @@
+<div
+  #frame
+  class="frame"
+  [class.dragging]="dragging()"
+  (wheel)="onWheel($event)"
+  (dblclick)="onDblClick($event)"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+>
+  @if (src(); as url) {
+    <img
+      [src]="url"
+      [alt]="file().name"
+      draggable="false"
+      [style.transform]="transform()"
+      [class.pixelated]="scale() >= 2"
+      [class.hidden]="!natural()"
+      (load)="onLoad($any($event.target))"
+      (error)="error.set('Image illisible')"
+    />
+  }
+  @if (error()) {
+    <div class="overlay error"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
+  } @else if (!natural()) {
+    <div class="overlay"><mat-spinner diameter="40"></mat-spinner></div>
+  }
+</div>
+
+@if (natural(); as n) {
+  <div class="toolbar">
+    <button mat-icon-button (click)="zoomBy(1 / 1.25)" matTooltip="Dézoomer"><mat-icon>zoom_out</mat-icon></button>
+    <span class="zoom">{{ scale() * 100 | number: '1.0-0' }} %</span>
+    <button mat-icon-button (click)="zoomBy(1.25)" matTooltip="Zoomer"><mat-icon>zoom_in</mat-icon></button>
+    <button mat-button (click)="fit()" [class.active]="fitted()" matTooltip="Ajuster à la fenêtre">
+      <mat-icon>fit_screen</mat-icon> Ajuster
+    </button>
+    <button mat-button (click)="actualSize()" [class.active]="scale() === 1" matTooltip="Taille réelle">1:1</button>
+    <span class="dims">{{ n.w }} × {{ n.h }} px</span>
+  </div>
+}

@@ -2,7 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { AuthService } from './auth';
-import { Category, ModelDetail, ModelFile, ModelSummary } from '../models';
+import { Category, ModelDetail, ModelFile, ModelSummary, ScanResult, ScanStatus } from '../models';
+
+function saveBlob(blob: Blob, fileName: string): void {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = fileName;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 10_000);
+}
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -45,21 +54,30 @@ export class ApiService {
           const disposition = res.headers.get('Content-Disposition') ?? '';
           const match = /filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i.exec(disposition);
           const fileName = match ? decodeURIComponent(match[1] ?? match[2]) : `modele-${id}`;
-          const objectUrl = URL.createObjectURL(res.body!);
-          const link = document.createElement('a');
-          link.href = objectUrl;
-          link.download = fileName;
-          link.click();
-          setTimeout(() => URL.revokeObjectURL(objectUrl), 10_000);
+          saveBlob(res.body!, fileName);
         })
       );
+  }
+
+  /** Télécharge un seul fichier du modèle (extrait de l'archive si besoin). */
+  downloadFile(file: ModelFile): Observable<void> {
+    return this.modelFile(file).pipe(map((f) => saveBlob(f, file.name)));
   }
 
   /** Un fichier du modèle (extrait de l'archive côté backend), sous forme de File pour le viewer 3D. */
   modelFile(file: ModelFile): Observable<File> {
     return this.http
       .get(file.url, { headers: this.authHeaders(), responseType: 'blob' })
-      .pipe(map((blob) => new File([blob], file.name)));
+      .pipe(map((blob) => new File([blob], file.name, { type: blob.type })));
+  }
+
+  scanStatus(): Observable<ScanStatus> {
+    return this.http.get<ScanStatus>(`${this.baseUrl}/admin/scan`, { headers: this.authHeaders() });
+  }
+
+  /** Lance un scan du dossier des modèles et attend son résultat. */
+  rescan(): Observable<ScanResult> {
+    return this.http.post<ScanResult>(`${this.baseUrl}/admin/scan`, {}, { headers: this.authHeaders() });
   }
 
   adminCategories(): Observable<Category[]> {
