@@ -26,6 +26,15 @@ export class ApiService {
     return this.http.post<{ token: string; role: number }>(`${this.baseUrl}/auth/login`, { username, password });
   }
 
+  setupStatus(): Observable<{ required: boolean }> {
+    return this.http.get<{ required: boolean }>(`${this.baseUrl}/auth/setup`);
+  }
+
+  /** Premier lancement : définit le mot de passe admin et renvoie une session. */
+  setup(password: string): Observable<{ token: string; role: number }> {
+    return this.http.post<{ token: string; role: number }>(`${this.baseUrl}/auth/setup`, { password });
+  }
+
   changePassword(currentPassword: string, newPassword: string): Observable<void> {
     return this.http.put<void>(
       `${this.baseUrl}/auth/password`,

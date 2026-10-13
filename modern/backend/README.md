@@ -4,8 +4,8 @@ Backend API Express pour migrer le catalogue PHP vers une architecture frontend/
 
 ## Configuration sécurité
 
-- Les comptes sont dans la table `users` (bcrypt). Compte par défaut : `admin` / `admin`, à changer
-  depuis la page *Mon compte* du frontend (`PUT /api/auth/password`).
+- Les comptes sont dans la table `users` (bcrypt). Le dump crée `admin` sans mot de passe : il est
+  choisi au premier lancement (page `/setup`), puis modifiable dans *Mon compte*.
 - Connexion et changement de mot de passe limités à 20 tentatives / 15 min par IP.
 - Exemple de génération hash:
 
@@ -17,6 +17,8 @@ node -e "const b=require('bcryptjs'); b.hash('mon-mot-de-passe', 12).then(consol
 
 - `GET /api/health`
 - `POST /api/auth/login`
+- `GET /api/auth/setup` — `{ required }` : vrai tant qu'aucun admin n'a de mot de passe
+- `POST /api/auth/setup` — `{ password }` : premier lancement uniquement (409 ensuite), renvoie une session
 - `PUT /api/auth/password` (connecté) — `{ currentPassword, newPassword }`, 8 caractères min.
 - `GET /api/categories`
 - `GET /api/models?category=<name>`
@@ -39,7 +41,7 @@ dossier `models/` vide annule le scan (garde-fou contre un montage absent).
 
 ## Lancement
 
-Via Docker (recommandé, depuis la racine du dépôt) : `docker compose up -d --build backend`.
+Via Docker (recommandé) : `./install.sh` à la racine du dépôt, ou `docker compose up -d --build backend`.
 L'image embarque `7z` + support RAR. Hors Docker, il faut `7z` dans le PATH.
 
 

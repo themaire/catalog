@@ -34,7 +34,8 @@ router.post('/login', authLimiter, async (req, res) => {
     );
 
     const user = rows[0];
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    // password_hash vide : compte pas encore initialisé (voir /setup).
+    if (!user || !user.password_hash) return res.status(401).json({ error: 'Invalid credentials' });
 
     const passwordOk = await bcrypt.compare(parsed.data.password, user.password_hash);
     if (!passwordOk) return res.status(401).json({ error: 'Invalid credentials' });
@@ -43,6 +44,48 @@ router.post('/login', authLimiter, async (req, res) => {
     return res.json({ token, role: user.role });
   } catch (err) {
     console.error('[auth/login]', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Premier lancement : tant qu'aucun admin actif n'a de mot de passe, l'application doit être initialisée.
+async function setupRequired() {
+  const rows = await query("SELECT COUNT(*) AS n FROM users WHERE role = 2 AND active = 1 AND password_hash <> ''");
+  return Number(rows[0].n) === 0;
+}
+
+router.get('/setup', async (_req, res, next) => {
+  try {
+    res.json({ required: await setupRequired() });
+  } catch (err) {
+    next(err);
+  }
+});
+
+const setupSchema = z.object({ password: z.string().min(8).max(200) });
+
+// Définit le mot de passe du compte admin au premier lancement, puis connecte directement.
+// Refusé dès qu'un admin a un mot de passe : impossible de reprendre la main sur une instance initialisée.
+router.post('/setup', authLimiter, async (req, res) => {
+  const parsed = setupSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: 'Le mot de passe doit faire au moins 8 caractères' });
+
+  try {
+    if (!(await setupRequired())) return res.status(409).json({ error: "L'application est déjà initialisée" });
+    const hash = await bcrypt.hash(parsed.data.password, 12);
+    // UPDATE conditionnel : si deux requêtes arrivent en même temps, une seule l'emporte.
+    const result = await query("UPDATE users SET password_hash = ?, active = 1 WHERE username = 'admin' AND password_hash = ''", [
+      hash
+    ]);
+    if (result.affectedRows === 0) {
+      const existing = await query("SELECT id FROM users WHERE username = 'admin' LIMIT 1");
+      if (existing.length) return res.status(409).json({ error: "L'application est déjà initialisée" });
+      await query("INSERT INTO users (username, password_hash, role) VALUES ('admin', ?, 2)", [hash]);
+    }
+    const token = jwt.sign({ sub: 'admin', role: 2 }, jwtSecret, { expiresIn: '8h' });
+    return res.json({ token, role: 2 });
+  } catch (err) {
+    console.error('[auth/setup]', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -65,7 +108,7 @@ router.put('/password', authLimiter, async (req, res) => {
       payload.sub
     ]);
     const user = rows[0];
-    if (!user || !(await bcrypt.compare(parsed.data.currentPassword, user.password_hash))) {
+    if (!user?.password_hash || !(await bcrypt.compare(parsed.data.currentPassword, user.password_hash))) {
       return res.status(403).json({ error: 'Mot de passe actuel incorrect' });
     }
     const hash = await bcrypt.hash(parsed.data.newPassword, 12);

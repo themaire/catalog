@@ -1,0 +1,9 @@
+# Ports de debug, publiés sur 127.0.0.1 uniquement (client mysql, appels directs à l'API) :
+#   docker compose -f docker-compose.yml -f docker-compose.debug.yml up -d
+services:
+  db:
+    ports:
+      - "127.0.0.1:${DB_HOST_PORT:-3306}:3306"
+  backend:
+    ports:
+      - "127.0.0.1:${BACKEND_HOST_PORT:-3080}:3000"

@@ -164,8 +164,15 @@ Réalisé (notes) :
 - Legacy supprimé (pas de dossier `legacy/`) : `catalog/`, `install.sh`, `files_install/`,
   anciennes captures, `modern/MIGRATION.md`, `lib3d_db_model.txt`, `package.json` racine.
   Récupérable via l'étiquette git `php-legacy`.
-- Mot de passe : le dump garde `admin`/`admin` pour le premier démarrage ; page *Mon compte*
+- Mot de passe : le dump crée `admin` **sans mot de passe** ; au premier lancement le site
+  redirige vers `/setup` pour le choisir (refusé une fois défini). Page *Mon compte*
   (`PUT /api/auth/password`) pour le changer, + limite de tentatives sur la connexion.
+- Nouveau `install.sh` (pour une installation chez un tiers) : vérifie 64 bits/RAM, installe
+  Docker si absent (get.docker.com), génère `.env`, lance la stack, attend qu'elle réponde.
+  Testé sur une copie neuve du dépôt en parallèle de l'instance piserve.
+- Compose : plus de `container_name` (plusieurs instances possibles sur une machine) ; ports
+  de debug MariaDB/API déplacés dans `docker-compose.debug.yml` (évite un conflit avec un
+  MariaDB déjà présent chez l'hôte).
 - README réécrit (installation Docker, ajout de modèles, captures dans `docs/`).
 - Correctif : dates `DATE` renvoyées en chaîne (plus de décalage d'un jour selon le fuseau).
 

@@ -251,7 +251,9 @@ CREATE TABLE `users` (
   UNIQUE KEY `uq_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Comptes utilisateurs. role: 1=moderateur, 2=admin';
 
+-- Compte admin sans mot de passe : il est choisi dans l'application au premier lancement
+-- (page /setup, POST /api/auth/setup). password_hash vide = connexion impossible.
 INSERT INTO users (username, password_hash, role)
-VALUES ('admin', '$2b$10$ch7S0KIctRrgk6eNkrtY1./5fVFM3dzCYAKydGDoyEenFN7iwPoo.', 2); -- mot de passe par défaut : admin (à changer)
+VALUES ('admin', '', 2);
 
 COMMIT;

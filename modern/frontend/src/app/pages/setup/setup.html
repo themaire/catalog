@@ -1,0 +1,38 @@
+<div class="login-wrapper">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="login-avatar">waving_hand</mat-icon>
+      <mat-card-title>Bienvenue !</mat-card-title>
+      <mat-card-subtitle>Premier lancement de STL Catalog</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p class="setup-intro">
+        Choisissez le mot de passe du compte administrateur <strong>admin</strong>.
+        Il servira à vous connecter et à gérer le catalogue.
+      </p>
+      <form (ngSubmit)="submit()" class="login-form">
+        <input type="text" name="username" value="admin" autocomplete="username" hidden />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe (8 caractères min.)</mat-label>
+          <mat-icon matPrefix>key</mat-icon>
+          <input matInput [(ngModel)]="password" name="password" type="password" required autocomplete="new-password" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <mat-icon matPrefix>key</mat-icon>
+          <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password" />
+        </mat-form-field>
+
+        @if (error()) {
+          <div class="login-error"><mat-icon>warning</mat-icon> {{ error() }}</div>
+        }
+
+        <button mat-raised-button color="primary" type="submit" class="full-width login-btn" [disabled]="saving()">
+          <mat-icon>rocket_launch</mat-icon> Démarrer
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

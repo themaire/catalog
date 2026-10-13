@@ -1,7 +1,8 @@
+# Seul le frontend est publié sur le réseau. Pour accéder aussi à MariaDB et à l'API depuis l'hôte :
+#   docker compose -f docker-compose.yml -f docker-compose.debug.yml up -d
 services:
   db:
     image: mariadb:10.11
-    container_name: catalog-db
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD manquant dans .env}
@@ -12,9 +13,6 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./lib3d_bdd.sql:/docker-entrypoint-initdb.d/01-lib3d_bdd.sql:ro
-    # Exposé uniquement en local sur l'hôte (debug / client mysql) ; le backend passera par le réseau compose.
-    ports:
-      - "127.0.0.1:${DB_HOST_PORT:-3306}:3306"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -24,7 +22,6 @@ services:
 
   backend:
     build: ./modern/backend
-    container_name: catalog-backend
     restart: unless-stopped
     depends_on:
       db:
@@ -44,14 +41,9 @@ services:
       # Lecture seule : le backend ne modifie jamais les modèles, il extrait dans le cache.
       - ${MODELS_DIR:-./modeles}:/data/models:ro
       - extract-cache:/cache
-    # Accès direct à l'API pour debug, local uniquement (le LAN passe par le frontend).
-    # Pas 3000 : déjà pris par Grafana sur piserve.
-    ports:
-      - "127.0.0.1:${BACKEND_HOST_PORT:-3080}:3000"
 
   frontend:
     build: ./modern/frontend
-    container_name: catalog-frontend
     restart: unless-stopped
     depends_on:
       backend:

@@ -29,30 +29,29 @@ archives zip / rar / 7z) dans un dossier, le catalogue les indexe tout seul et p
 
 ## Installation
 
-Prérequis : une machine avec Docker et Docker Compose (testé sur Raspberry Pi 5, arm64).
+Prérequis : un Raspberry Pi 4 ou 5 (2 Go de RAM ou plus) sous **Raspberry Pi OS 64 bits**, ou
+n'importe quel Linux Debian/Ubuntu 64 bits.
 
 ```bash
-git clone git@github.com:themaire/catalog.git
+sudo apt install -y git
+git clone https://github.com/themaire/catalog.git
 cd catalog
-cp .env.example .env
+./install.sh
 ```
 
-Renseigner dans `.env` au minimum les secrets (par exemple avec `openssl rand -hex 32`) :
+Le script :
 
-- `DB_ROOT_PASSWORD`, `DB_PASSWORD` : mots de passe MariaDB
-- `JWT_SECRET` : clé de signature des sessions
+- vérifie le système (64 bits obligatoire, mémoire) ;
+- installe Docker s'il est absent (script officiel get.docker.com) et l'active au démarrage ;
+- crée le fichier `.env` avec des mots de passe aléatoires ;
+- construit et lance l'application (quelques minutes la première fois sur un Pi).
 
-Puis :
+Le catalogue est ensuite accessible sur `http://<ip-du-pi>:8090` (port réglable via
+`FRONTEND_PORT` dans `.env`). Il redémarre tout seul après un reboot ou un plantage.
 
-```bash
-docker compose up -d --build
-```
-
-Le catalogue est accessible sur `http://<ip-de-la-machine>:8090` (port réglable via
-`FRONTEND_PORT`).
-
-**Premier démarrage** : se connecter avec `admin` / `admin`, puis changer immédiatement le mot de
-passe dans *Mon compte*.
+**Premier lancement** : la première ouverture du site demande de choisir le mot de passe du
+compte administrateur `admin`. La première personne du réseau qui ouvre le site le choisit : le
+faire juste après l'installation. Il se change ensuite dans *Mon compte*.
 
 ## Ajouter des modèles
 
@@ -80,7 +79,7 @@ modeles/
 
 ```bash
 git pull
-docker compose up -d --build
+./install.sh
 ```
 
 Les données (base MariaDB, cache des fichiers extraits) sont dans les volumes Docker `db-data` et
@@ -94,12 +93,15 @@ Les données (base MariaDB, cache des fichiers extraits) sont dans les volumes D
 | `backend` | API Node/Express, scan planifié, extraction des archives via `7z` ([modern/backend](modern/backend)) |
 | `db` | MariaDB 10.11, initialisée par [lib3d_bdd.sql](lib3d_bdd.sql) |
 
+Pour le debug, `docker-compose.debug.yml` publie aussi MariaDB et l'API sur `127.0.0.1` :
+`docker compose -f docker-compose.yml -f docker-compose.debug.yml up -d`.
+
 Le détail de l'API et des variables d'environnement est dans
 [modern/backend/README.md](modern/backend/README.md).
 
 ## Ancienne version PHP
 
-L'application PHP d'origine (2020, installation par script sur Raspberry Pi OS) n'est plus
+L'application PHP d'origine (2020, Apache + PHP installés directement sur Raspberry Pi OS) n'est plus
 maintenue. Elle reste disponible dans l'historique git sous l'étiquette `php-legacy` :
 
 ```bash

@@ -88,3 +88,10 @@ mat-card-subtitle { color: var(--stl-accent) !important; opacity: 0.9; }
   color: #c4f5cf;
   font-size: 0.88rem;
 }
+
+.setup-intro {
+  margin: 0.5rem 0 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+}
