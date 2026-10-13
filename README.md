@@ -42,7 +42,7 @@ cd catalog
 Le script :
 
 - vérifie le système (64 bits obligatoire, mémoire) ;
-- installe Docker s'il est absent (script officiel get.docker.com) et l'active au démarrage ;
+- installe Docker s'il est absent (dépôt apt officiel de Docker) et l'active au démarrage ;
 - crée le fichier `.env` avec des mots de passe aléatoires ;
 - construit et lance l'application (quelques minutes la première fois sur un Pi).
 

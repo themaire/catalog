@@ -168,7 +168,9 @@ Réalisé (notes) :
   redirige vers `/setup` pour le choisir (refusé une fois défini). Page *Mon compte*
   (`PUT /api/auth/password`) pour le changer, + limite de tentatives sur la connexion.
 - Nouveau `install.sh` (pour une installation chez un tiers) : vérifie 64 bits/RAM, installe
-  Docker si absent (get.docker.com), génère `.env`, lance la stack, attend qu'elle réponde.
+  Docker si absent (dépôt apt officiel, comme le rôle Ansible raspberry_pi_configurator, avec
+  keyring signed-by), génère `.env`, lance la stack, attend qu'elle réponde. Installation de
+  Docker testée dans des conteneurs Debian 12 et 13 arm64 vierges.
   Testé sur une copie neuve du dépôt en parallèle de l'instance piserve.
 - Assistant de premier lancement (`/setup`, 3 étapes) : mot de passe admin puis choix du
   dossier des modèles dans un explorateur (`/media` en propagation rslave, `/mnt`, `/home`,

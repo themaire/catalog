@@ -3,7 +3,7 @@
 #
 #   ./install.sh
 #
-# - installe Docker s'il est absent (script officiel get.docker.com) ;
+# - installe Docker s'il est absent (dépôt apt officiel de Docker) ;
 # - crée .env avec des secrets aléatoires au premier lancement (jamais écrasés ensuite) ;
 # - construit et démarre la stack ; elle redémarre seule après un reboot ou un plantage.
 # Relancer le script après un `git pull` met l'application à jour.
@@ -53,11 +53,29 @@ step "Docker"
 if command -v docker >/dev/null; then
   ok "Docker déjà installé : $(docker --version)"
 else
-  echo "Docker absent : installation via le script officiel (https://get.docker.com)…"
-  command -v curl >/dev/null || { $SUDO apt-get update -qq && $SUDO apt-get install -y -qq curl; }
-  curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
-  $SUDO sh /tmp/get-docker.sh
-  rm -f /tmp/get-docker.sh
+  # Même méthode que le rôle Ansible raspberry_pi_configurator (install_docker.yml) : dépôt apt
+  # officiel de Docker, avec la clé dans /etc/apt/keyrings (signed-by) plutôt qu'apt-key, obsolète.
+  # Raspberry Pi OS 64 bits est une Debian arm64 : dépôt linux/debian (linux/ubuntu sous Ubuntu).
+  # shellcheck disable=SC1091
+  . /etc/os-release
+  case "${ID:-}" in
+    debian|raspbian) docker_distro=debian ;;
+    ubuntu) docker_distro=ubuntu ;;
+    *) die "Distribution « ${ID:-inconnue} » non gérée : installer Docker à la main (https://docs.docker.com/engine/install/) puis relancer." ;;
+  esac
+  codename=${VERSION_CODENAME:-}
+  [ -n "$codename" ] || die "Version de la distribution introuvable (VERSION_CODENAME dans /etc/os-release)"
+  echo "Docker absent : installation depuis le dépôt officiel ($docker_distro $codename, $arch_userland)…"
+
+  $SUDO apt-get update -qq
+  $SUDO apt-get install -y -qq ca-certificates curl
+  $SUDO install -m 0755 -d /etc/apt/keyrings
+  $SUDO curl -fsSL "https://download.docker.com/linux/$docker_distro/gpg" -o /etc/apt/keyrings/docker.asc
+  $SUDO chmod a+r /etc/apt/keyrings/docker.asc
+  echo "deb [arch=$arch_userland signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/$docker_distro $codename stable" \
+    | $SUDO tee /etc/apt/sources.list.d/docker.list >/dev/null
+  $SUDO apt-get update -qq
+  $SUDO apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   ok "Docker installé : $(docker --version)"
 fi
 
