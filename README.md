@@ -1,55 +1,107 @@
-@ 2020    Nicolas ELIE
-nicolas@familleelie.fr
+# STL Catalog
 
--- STL web catalog --
+Catalogue web de modèles d'impression 3D, auto-hébergé. On dépose ses modèles (dossiers ou
+archives zip / rar / 7z) dans un dossier, le catalogue les indexe tout seul et permet de les
+**visualiser en 3D dans le navigateur** sans rien décompresser à la main.
 
-Installation guide.
+© 2020–2026 Nicolas ELIE
 
-!!! Thinked to be installed on a Raspberry Pi OS or Debian !!!
-Otherwise you must change the models's symbolic link location in the installation script and / or adapte the install bash script yourself.
+![Fiche d'un modèle avec le viewer 3D](docs/fiche-3d.png)
 
-!! If you use Raspberry Pi OS Lite you will need to install git
-sudo apt update && sudo apt install -y git
+## Fonctionnalités
 
+- **Indexation automatique** du dossier `modeles/` au démarrage, toutes les 10 minutes et à la
+  demande (bouton *Rescanner* dans l'administration). Ajouts, modifications et suppressions sont
+  répercutés en base.
+- **Archives zip, rar et 7z** lues sans extraction complète : seul le fichier consulté est
+  extrait, puis mis en cache.
+- **Viewer 3D** ([Online 3D Viewer](https://github.com/kovacsv/Online3DViewer)) : STL, OBJ+MTL,
+  3MF, STEP/IGES, PLY, AMF, OFF, glTF, FBX, 3DS, DAE.
+- **Aperçu de tous les fichiers** d'un modèle : images (zoom, taille réelle 1:1, déplacement),
+  textes (README, gcode…), PDF.
+- **Téléchargement** du modèle complet (archive d'origine, ou zip généré pour un dossier) ou
+  d'un fichier seul.
+- **Catégories avec niveaux d'accès** : 0 = public, 1 = modérateur, 2 = administrateur.
 
-#1 Clone the catalog's repo : 
-git clone https://github.com/themaire/catalog
+| Liste d'une catégorie | Visualiseur d'images |
+| --- | --- |
+| ![Liste](docs/liste.png) | ![Image](docs/fiche-image.png) |
 
-#2
-Change dir to the just cloned repo dir :
+## Installation
+
+Prérequis : une machine avec Docker et Docker Compose (testé sur Raspberry Pi 5, arm64).
+
+```bash
+git clone git@github.com:themaire/catalog.git
 cd catalog
+cp .env.example .env
+```
 
-#3
-Run the .sh script with sudo :
-sudo ./install.sh
+Renseigner dans `.env` au minimum les secrets (par exemple avec `openssl rand -hex 32`) :
 
-That all... Now you can add your 3d models files (forders or zip or rar files) in /home/pi/models in the thingiverse or perso folders, don't rename them.
-Put your 3D models in /home/pi/models/thingiverse or /home/pi/models/perso folders. One subfolder by stl project as the exemple i left in /home/pi/models/thingiverse. You can direcly add a zip or a rar archive in these folders.
+- `DB_ROOT_PASSWORD`, `DB_PASSWORD` : mots de passe MariaDB
+- `JWT_SECRET` : clé de signature des sessions
 
-By default, a crontab script scan every 15 minutes the content of /home/pi/models and updatee the BDD content.
-If you add a file in a already scanned folder, it will be added in the BDD after the scanning interval.
-If you delete a folder, it will be deleted in the BDD.
+Puis :
 
+```bash
+docker compose up -d --build
+```
 
-Update guide.
-It is easy. 
+Le catalogue est accessible sur `http://<ip-de-la-machine>:8090` (port réglable via
+`FRONTEND_PORT`).
 
-#1
-Change dir to the just cloned repo dir :
-cd catalog
+**Premier démarrage** : se connecter avec `admin` / `admin`, puis changer immédiatement le mot de
+passe dans *Mon compte*.
 
-#2
-Update the project :
+## Ajouter des modèles
+
+Les modèles se rangent dans `modeles/<catégorie>/` (dossier configurable via `MODELS_DIR`) :
+
+```
+modeles/
+├── thingiverse/                  ← une catégorie = un dossier
+│   ├── Arduino_Uno_Snug_Case/    ← un modèle = un dossier…
+│   │   ├── files/boitier.stl
+│   │   └── images/photo.jpg
+│   └── Support_casque.zip        ← … ou une archive zip / rar / 7z
+└── perso/
+```
+
+- Une catégorie inconnue est créée automatiquement au niveau `SCAN_NEW_CATEGORY_LEVEL`
+  (1 = modérateur par défaut). Pour la rendre publique, passer son niveau à 0 dans
+  *Administration*.
+- La vignette d'un modèle est la première image trouvée dans son dossier ou son archive.
+- Le dossier est monté **en lecture seule** : le catalogue ne modifie jamais les modèles.
+- Seuls les exemples `modeles/thingiverse/` sont versionnés, le reste du dossier est ignoré par
+  git.
+
+## Mise à jour
+
+```bash
 git pull
+docker compose up -d --build
+```
 
-#3
-Run the install script again :
-sudo ./install.sh
+Les données (base MariaDB, cache des fichiers extraits) sont dans les volumes Docker `db-data` et
+`extract-cache` et survivent aux mises à jour.
 
+## Architecture
 
-## Modern migration workspace
+| Service | Rôle |
+| --- | --- |
+| `frontend` | Angular servi par Nginx, proxy `/api` vers le backend ([modern/frontend](modern/frontend)) |
+| `backend` | API Node/Express, scan planifié, extraction des archives via `7z` ([modern/backend](modern/backend)) |
+| `db` | MariaDB 10.11, initialisée par [lib3d_bdd.sql](lib3d_bdd.sql) |
 
-Un workspace de migration est disponible dans `modern`:
-- backend API Express: `modern/backend`
-- frontend Angular: `modern/frontend`
-- guide de migration: `modern/MIGRATION.md`
+Le détail de l'API et des variables d'environnement est dans
+[modern/backend/README.md](modern/backend/README.md).
+
+## Ancienne version PHP
+
+L'application PHP d'origine (2020, installation par script sur Raspberry Pi OS) n'est plus
+maintenue. Elle reste disponible dans l'historique git sous l'étiquette `php-legacy` :
+
+```bash
+git checkout php-legacy
+```

@@ -9,6 +9,9 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 
+// Derrière le Nginx du frontend : l'IP client vient de X-Forwarded-For (pour les rate limits).
+app.set('trust proxy', 1);
+
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));

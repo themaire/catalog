@@ -4,6 +4,7 @@ import { List } from './pages/list/list';
 import { Detail } from './pages/detail/detail';
 import { Admin } from './pages/admin/admin';
 import { Login } from './pages/login/login';
+import { Account } from './pages/account/account';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'catalog/:category', component: List },
   { path: 'model/:id', component: Detail },
   { path: 'admin', component: Admin },
+  { path: 'compte', component: Account },
   { path: '**', redirectTo: '' }
 ];

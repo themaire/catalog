@@ -1,0 +1,42 @@
+<div class="login-wrapper">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="login-avatar">manage_accounts</mat-icon>
+      <mat-card-title>Mon compte</mat-card-title>
+      <mat-card-subtitle>Changer mon mot de passe</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="submit()" class="login-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe actuel</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput [(ngModel)]="currentPassword" name="currentPassword" type="password" required autocomplete="current-password" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nouveau mot de passe (8 caractères min.)</mat-label>
+          <mat-icon matPrefix>key</mat-icon>
+          <input matInput [(ngModel)]="newPassword" name="newPassword" type="password" required autocomplete="new-password" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmer le nouveau mot de passe</mat-label>
+          <mat-icon matPrefix>key</mat-icon>
+          <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password" />
+        </mat-form-field>
+
+        @if (error()) {
+          <div class="login-error"><mat-icon>warning</mat-icon> {{ error() }}</div>
+        }
+        @if (done()) {
+          <div class="login-success"><mat-icon>check_circle</mat-icon> Mot de passe modifié</div>
+        }
+
+        <button mat-raised-button color="primary" type="submit" class="full-width login-btn" [disabled]="saving()">
+          <mat-icon>save</mat-icon> Enregistrer
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

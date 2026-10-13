@@ -1,16 +1,19 @@
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config');
 
-function getRole(req) {
+// Payload du JWT valide de la requête, ou null.
+function getTokenPayload(req) {
   const auth = req.headers.authorization;
-  if (!auth?.startsWith('Bearer ')) return 0;
+  if (!auth?.startsWith('Bearer ')) return null;
   try {
-    const token = auth.slice('Bearer '.length);
-    const payload = jwt.verify(token, jwtSecret);
-    return Number(payload.role ?? 0);
+    return jwt.verify(auth.slice('Bearer '.length), jwtSecret);
   } catch {
-    return 0;
+    return null;
   }
+}
+
+function getRole(req) {
+  return Number(getTokenPayload(req)?.role ?? 0);
 }
 
 function requireRole(minRole) {
@@ -24,4 +27,4 @@ function requireRole(minRole) {
   };
 }
 
-module.exports = { getRole, requireRole };
+module.exports = { getTokenPayload, getRole, requireRole };

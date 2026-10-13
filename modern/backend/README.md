@@ -4,7 +4,9 @@ Backend API Express pour migrer le catalogue PHP vers une architecture frontend/
 
 ## Configuration sécurité
 
-- Les comptes sont dans la table `users` (bcrypt). Compte par défaut : `admin` / `admin`, à changer.
+- Les comptes sont dans la table `users` (bcrypt). Compte par défaut : `admin` / `admin`, à changer
+  depuis la page *Mon compte* du frontend (`PUT /api/auth/password`).
+- Connexion et changement de mot de passe limités à 20 tentatives / 15 min par IP.
 - Exemple de génération hash:
 
 ```bash
@@ -15,6 +17,7 @@ node -e "const b=require('bcryptjs'); b.hash('mon-mot-de-passe', 12).then(consol
 
 - `GET /api/health`
 - `POST /api/auth/login`
+- `PUT /api/auth/password` (connecté) — `{ currentPassword, newPassword }`, 8 caractères min.
 - `GET /api/categories`
 - `GET /api/models?category=<name>`
 - `GET /api/models/:id`

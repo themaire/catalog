@@ -26,6 +26,14 @@ export class ApiService {
     return this.http.post<{ token: string; role: number }>(`${this.baseUrl}/auth/login`, { username, password });
   }
 
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.put<void>(
+      `${this.baseUrl}/auth/password`,
+      { currentPassword, newPassword },
+      { headers: this.authHeaders() }
+    );
+  }
+
   categories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.baseUrl}/categories`, { headers: this.authHeaders() });
   }

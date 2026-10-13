@@ -146,19 +146,36 @@ Réalisé (notes) :
 ### Lot 4 — Docker compose complet + déploiement piserve
 - [x] Service `frontend` : build Angular multi-stage → Nginx, `proxy_pass /api`
       vers `backend:3000`.
-- [ ] `docker-compose.yml` final : réseaux, dépendances (`depends_on` + healthcheck
+- [x] `docker-compose.yml` final : réseaux, dépendances (`depends_on` + healthcheck
       DB), `.env` pour les secrets (JWT_SECRET, DB password, etc.), `.env.example`
       commité.
-- [ ] Sur piserve : `docker compose up --build -d`, vérifier logs des 3 services.
-- [ ] Vérifier l'accès réseau local (IP piserve sur le LAN) depuis un autre poste.
+- [x] Sur piserve : `docker compose up --build -d`, vérifier logs des 3 services.
+- [x] Vérifier l'accès réseau local (IP piserve sur le LAN) depuis un autre poste.
 
 ### Lot 5 — Nettoyage
-- [ ] Une fois la parité fonctionnelle validée : retirer `catalog/` (PHP legacy),
+- [x] Une fois la parité fonctionnelle validée : retirer `catalog/` (PHP legacy),
       `install.sh`, `files_install/` du dépôt (ou les déplacer dans `legacy/` pour
       archive, au choix).
-- [ ] Mettre à jour `README.md` (installation = `docker compose up`, plus de script
+- [x] Mettre à jour `README.md` (installation = `docker compose up`, plus de script
       shell Raspberry Pi OS).
-- [ ] Changer le mot de passe admin par défaut inséré dans le dump SQL.
+- [x] Changer le mot de passe admin par défaut inséré dans le dump SQL.
+
+Réalisé (notes) :
+- Legacy supprimé (pas de dossier `legacy/`) : `catalog/`, `install.sh`, `files_install/`,
+  anciennes captures, `modern/MIGRATION.md`, `lib3d_db_model.txt`, `package.json` racine.
+  Récupérable via l'étiquette git `php-legacy`.
+- Mot de passe : le dump garde `admin`/`admin` pour le premier démarrage ; page *Mon compte*
+  (`PUT /api/auth/password`) pour le changer, + limite de tentatives sur la connexion.
+- README réécrit (installation Docker, ajout de modèles, captures dans `docs/`).
+- Correctif : dates `DATE` renvoyées en chaîne (plus de décalage d'un jour selon le fuseau).
+
+## Pistes d'amélioration (après le v1)
+
+- Gestion des utilisateurs dans l'admin (créer un modérateur, désactiver un compte).
+- Renommer une catégorie dans l'admin ne renomme pas le dossier : un nouveau modèle déposé
+  dans ce dossier recrée une catégorie du nom du dossier.
+- Budget du bundle initial Angular dépassé (≈700 Ko pour 500 Ko) : avertissement seulement.
+- Support RAR à valider avec de vraies archives.
 
 ## Points restants à trancher plus tard (pas bloquants pour démarrer)
 

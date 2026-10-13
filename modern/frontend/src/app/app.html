@@ -22,6 +22,9 @@
       </a>
     }
     @if (auth.role() > 0) {
+      <a mat-button routerLink="/compte" routerLinkActive="nav-active">
+        <mat-icon>manage_accounts</mat-icon> Mon compte
+      </a>
       <button mat-button (click)="logout()" class="logout-btn">
         <mat-icon>logout</mat-icon> Déconnexion
       </button>

@@ -12,6 +12,15 @@
   background: var(--stl-primary) !important;
   color: #fff !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  /* Champs lisibles sur fond sombre */
+  --mat-form-field-outlined-label-text-color: rgba(255, 255, 255, 0.7);
+  --mat-form-field-outlined-focus-label-text-color: var(--stl-accent);
+  --mat-form-field-outlined-outline-color: rgba(255, 255, 255, 0.35);
+  --mat-form-field-outlined-hover-outline-color: rgba(255, 255, 255, 0.7);
+  --mat-form-field-outlined-focus-outline-color: var(--stl-accent);
+  --mat-form-field-outlined-input-text-color: #fff;
+  --mat-form-field-leading-icon-color: rgba(255, 255, 255, 0.6);
+  --mat-form-field-outlined-caret-color: var(--stl-accent);
 }
 
 .login-avatar {
@@ -66,4 +75,16 @@ mat-card-subtitle { color: var(--stl-accent) !important; opacity: 0.9; }
   font-size: 1rem;
   background: var(--stl-accent) !important;
   color: var(--stl-text-on-accent) !important;
+}
+.login-success {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(60, 180, 90, 0.25);
+  border: 1px solid rgba(60, 180, 90, 0.5);
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.8rem;
+  color: #c4f5cf;
+  font-size: 0.88rem;
 }
