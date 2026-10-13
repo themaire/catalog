@@ -103,7 +103,22 @@ INSERT INTO `libelles` (`lib_id`, `lib_nom`, `lib_nom_id`, `lib_free`) VALUES
 (16, 'rar', 2, NULL),
 (17, 'gif', 2, NULL),
 (18, 'obj', 2, NULL),
-(19, '7z', 2, NULL);
+(19, '7z', 2, NULL),
+-- Formats 3D supplémentaires affichables par le viewer (online-3d-viewer)
+(20, '3mf', 2, NULL),
+(21, 'step', 2, NULL),
+(22, 'stp', 2, NULL),
+(23, 'iges', 2, NULL),
+(24, 'igs', 2, NULL),
+(25, 'ply', 2, NULL),
+(26, 'amf', 2, NULL),
+(27, 'off', 2, NULL),
+(28, 'glb', 2, NULL),
+(29, 'gltf', 2, NULL),
+(30, 'fbx', 2, NULL),
+(31, '3ds', 2, NULL),
+(32, 'dae', 2, NULL),
+(33, 'mtl', 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -184,7 +199,7 @@ ALTER TABLE `libelles_noms`
 -- AUTO_INCREMENT pour la table `libelles`
 --
 ALTER TABLE `libelles`
-  MODIFY `lib_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `lib_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT pour la table `libelles_noms`

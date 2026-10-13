@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { AuthService } from './auth';
-import { Category, ModelDetail, ModelSummary } from '../models';
+import { Category, ModelDetail, ModelFile, ModelSummary } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -32,8 +32,34 @@ export class ApiService {
     return this.http.get<ModelDetail>(`${this.baseUrl}/models/${id}`, { headers: this.authHeaders() });
   }
 
-  downloadUrl(id: number): string {
-    return `${this.baseUrl}/models/${id}/download`;
+  /** Archive (ou zip du dossier) du modèle, récupérée avec le token puis proposée à l'enregistrement. */
+  downloadModel(id: number): Observable<void> {
+    return this.http
+      .get(`${this.baseUrl}/models/${id}/download`, {
+        headers: this.authHeaders(),
+        responseType: 'blob',
+        observe: 'response'
+      })
+      .pipe(
+        map((res) => {
+          const disposition = res.headers.get('Content-Disposition') ?? '';
+          const match = /filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i.exec(disposition);
+          const fileName = match ? decodeURIComponent(match[1] ?? match[2]) : `modele-${id}`;
+          const objectUrl = URL.createObjectURL(res.body!);
+          const link = document.createElement('a');
+          link.href = objectUrl;
+          link.download = fileName;
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 10_000);
+        })
+      );
+  }
+
+  /** Un fichier du modèle (extrait de l'archive côté backend), sous forme de File pour le viewer 3D. */
+  modelFile(file: ModelFile): Observable<File> {
+    return this.http
+      .get(file.url, { headers: this.authHeaders(), responseType: 'blob' })
+      .pipe(map((blob) => new File([blob], file.name)));
   }
 
   adminCategories(): Observable<Category[]> {

@@ -115,13 +115,31 @@ Réalisé (notes) :
 - `getModel` renvoie maintenant `id` et `url` (endpoint extract) pour chaque fichier.
 
 ### Lot 3 — Frontend : viewer 3D
-- [ ] Ajouter `three` au frontend Angular (`npm install three`).
-- [ ] Composant `stl-viewer` : charge le STL via l'endpoint d'extraction du Lot 2
+- [x] Ajouter `three` au frontend Angular (`npm install three`).
+- [x] Composant `stl-viewer` : charge le STL via l'endpoint d'extraction du Lot 2
       avec `STLLoader`, rendu dans un `<canvas>` (orbit controls, lumière simple).
-- [ ] Intégrer le viewer dans `pages/detail` à la place/en complément de la liste
+- [x] Intégrer le viewer dans `pages/detail` à la place/en complément de la liste
       de fichiers actuelle (garder le bouton téléchargement de l'archive complète).
-- [ ] Gérer le cas "pas de STL trouvé dans l'archive" (fallback sur la liste de
+- [x] Gérer le cas "pas de STL trouvé dans l'archive" (fallback sur la liste de
       fichiers existante).
+
+Réalisé (notes) :
+- Lib retenue : **online-3d-viewer** (o3dv, MIT, moteur de 3dviewer.net, basé sur three.js)
+  plutôt que three.js nu : STL, OBJ+MTL, 3MF, STEP/IGES, PLY, AMF, OFF, glTF, FBX, 3DS, DAE
+  avec caméra/éclairage/cadrage prêts. Chargée en `import()` dynamique (chunk lazy 1 Mo,
+  232 Ko gzip) uniquement sur la fiche. Note : STEP/IGES/IFC chargent leur décodeur WASM
+  depuis cdn.jsdelivr.net à la volée (besoin d'Internet pour ces formats seulement).
+- Composant `components/viewer3d` : fichiers récupérés via HttpClient avec le token
+  (blob → File → `LoadModelFromFileList`), pour un OBJ ajoute mtl/textures du même dossier.
+- Fiche : viewer en tête, puces pour choisir le fichier 3D si plusieurs, lignes 3D de la
+  liste cliquables ; pas de fichier 3D → pas de viewer, liste seule.
+- Téléchargement de l'archive via HttpClient + token (corrige le 404 introduit au Lot 2).
+- Extensions 3D ajoutées à `libelles` (3mf, step, stp, iges, igs, ply, amf, off, glb, gltf,
+  fbx, 3ds, dae, mtl) pour que le scan les indexe.
+- Dépendances réalignées : `@angular/material`/`cdk` 21 → 20 (incompatibles avec core 20),
+  ajout explicite de `@angular/animations` (requis par `provideAnimationsAsync`).
+- Vérifié dans Chromium headless (WebGL) : rendu des 2 STL d'exemple, changement de
+  fichier, téléchargement.
 
 ### Lot 4 — Docker compose complet + déploiement piserve
 - [ ] Service `frontend` : build Angular multi-stage → Nginx, `proxy_pass /api`

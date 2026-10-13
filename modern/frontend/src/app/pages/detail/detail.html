@@ -13,6 +13,21 @@
       <h2 class="detail-title">{{ m.name }}</h2>
     </div>
 
+    @if (selected(); as sel) {
+      <mat-card class="viewer-card">
+        <div class="viewer-area"><app-viewer3d [files]="viewerFiles()" /></div>
+        @if (viewable().length > 1) {
+          <mat-chip-listbox class="viewer-choices" aria-label="Fichier 3D affiché">
+            @for (file of viewable(); track file.id) {
+              <mat-chip-option [selected]="file.id === sel.id" (click)="select(file)">
+                {{ file.name }}
+              </mat-chip-option>
+            }
+          </mat-chip-listbox>
+        }
+      </mat-card>
+    }
+
     <div class="detail-layout">
       <mat-card class="info-card">
         <mat-card-header>
@@ -34,9 +49,9 @@
           </dl>
         </mat-card-content>
         <mat-card-actions>
-          <a mat-raised-button color="primary" [href]="downloadUrl(m.id)">
-            <mat-icon>archive</mat-icon> Télécharger l'archive
-          </a>
+          <button mat-raised-button color="primary" [disabled]="downloading()" (click)="download(m.id)">
+            <mat-icon>archive</mat-icon> {{ downloading() ? 'Préparation…' : "Télécharger l'archive" }}
+          </button>
         </mat-card-actions>
       </mat-card>
 
@@ -50,9 +65,15 @@
             <p class="no-files">Aucun fichier attaché.</p>
           } @else {
             <div class="files-list">
-              @for (file of m.files; track file.path + file.name) {
-                <div class="file-row">
-                  <mat-icon class="file-icon">insert_drive_file</mat-icon>
+              @for (file of m.files; track file.id) {
+                <div
+                  class="file-row"
+                  [class.viewable]="isViewable(file)"
+                  [class.active]="file.id === selected()?.id"
+                  [attr.title]="file.path"
+                  (click)="select(file)"
+                >
+                  <mat-icon class="file-icon">{{ isViewable(file) ? 'view_in_ar' : 'insert_drive_file' }}</mat-icon>
                   <span class="file-name">{{ file.name }}</span>
                   <span class="file-type mat-badge">{{ file.type }}</span>
                   <span class="file-size">{{ (file.size / 1024 | number:'1.0-0') }} Ko</span>

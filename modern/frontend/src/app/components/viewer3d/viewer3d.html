@@ -1,0 +1,8 @@
+<div class="viewer-frame">
+  <div #canvasHost class="canvas-host"></div>
+  @if (loading()) {
+    <div class="overlay"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else if (error()) {
+    <div class="overlay error"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
+  }
+</div>

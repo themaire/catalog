@@ -14,10 +14,14 @@ export interface ModelSummary {
 }
 
 export interface ModelFile {
+  id: number;
   name: string;
   type: string;
+  /** Chemin relatif au modèle (dossier ou intérieur de l'archive) */
   path: string;
   size: number;
+  /** Endpoint d'extraction du fichier (nécessite le token si catégorie restreinte) */
+  url: string;
 }
 
 export interface ModelDetail {

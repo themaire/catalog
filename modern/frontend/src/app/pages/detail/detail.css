@@ -33,6 +33,26 @@
   color: #fff;
 }
 
+.viewer-card {
+  background: var(--stl-primary) !important;
+  padding: 0.75rem;
+  margin-bottom: 1.2rem;
+}
+
+.viewer-area {
+  height: min(60vh, 520px);
+}
+
+.viewer-choices {
+  display: block;
+  margin-top: 0.6rem;
+  --mat-chip-label-text-color: rgba(255, 255, 255, 0.85);
+  --mat-chip-outline-color: rgba(255, 255, 255, 0.35);
+  --mat-chip-selected-container-color: var(--stl-accent);
+  --mat-chip-selected-label-text-color: var(--stl-text-on-accent);
+  --mat-chip-with-icon-selected-icon-color: var(--stl-text-on-accent);
+}
+
 .detail-layout {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -40,7 +60,27 @@
 }
 
 @media (max-width: 700px) {
-  .detail-layout { grid-template-columns: 1fr; }
+  .viewer-card {
+  background: var(--stl-primary) !important;
+  padding: 0.75rem;
+  margin-bottom: 1.2rem;
+}
+
+.viewer-area {
+  height: min(60vh, 520px);
+}
+
+.viewer-choices {
+  display: block;
+  margin-top: 0.6rem;
+  --mat-chip-label-text-color: rgba(255, 255, 255, 0.85);
+  --mat-chip-outline-color: rgba(255, 255, 255, 0.35);
+  --mat-chip-selected-container-color: var(--stl-accent);
+  --mat-chip-selected-label-text-color: var(--stl-text-on-accent);
+  --mat-chip-with-icon-selected-icon-color: var(--stl-text-on-accent);
+}
+
+.detail-layout { grid-template-columns: 1fr; }
 }
 
 .info-card, .files-card {
@@ -94,6 +134,19 @@ dd {
   padding: 0.5rem 0;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   font-size: 0.85rem;
+}
+
+.file-row.viewable {
+  cursor: pointer;
+}
+
+.file-row.viewable:hover,
+.file-row.active {
+  background: rgba(242, 214, 162, 0.12);
+}
+
+.file-row.active .file-icon {
+  color: var(--stl-accent);
 }
 
 .file-icon {
