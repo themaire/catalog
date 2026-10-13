@@ -58,6 +58,13 @@ Le catalogue est ensuite accessible sur `http://<ip-du-pi>:8090` (port réglable
 La première personne du réseau qui ouvre le site fait cette configuration : la faire juste après
 l'installation. Mot de passe et dossier se changent ensuite dans *Mon compte* et *Administration*.
 
+| Choix du dossier des modèles | Fin de l'assistant |
+| --- | --- |
+| ![Assistant : dossier des modèles](docs/assistant-dossier.png) | ![Assistant : terminé](docs/assistant-termine.png) |
+
+L'explorateur ne montre que des noms de dossiers et n'est accessible qu'à l'administrateur. Un
+dossier illisible (droits Unix d'un autre utilisateur) est signalé par « Accès refusé ».
+
 ## Ajouter des modèles
 
 Le dossier des modèles se choisit dans l'assistant ou dans *Administration*. L'explorateur donne
